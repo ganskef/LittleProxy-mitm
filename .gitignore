@@ -1,0 +1,7 @@
+/.settings
+/target
+/.classpath
+/.project
+/littleproxy-mitm.p12
+/littleproxy-mitm.pem
+/log.txt
