@@ -132,7 +132,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 						</goals>
 						<configuration>
 							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>littleproxy-shade</shadedClassifierName>
+							<shadedClassifierName>shade</shadedClassifierName>
 							<artifactSet>
 							</artifactSet>
 
