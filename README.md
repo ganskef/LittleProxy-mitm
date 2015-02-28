@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ganskef/LittleProxy-mitm.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy)
+[![Build Status](https://travis-ci.org/ganskef/LittleProxy-mitm.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-mitm)
 
 LittleProxy-mitm is an extension for the [LittleProxy](https://github.com/adamfisk/LittleProxy)
 which enables Man-In-The-Middle for HTTPS. See 
@@ -40,7 +40,7 @@ HttpProxyServer server =
 ```
 
 Please refer the documentation of [LittleProxy](https://github.com/adamfisk/LittleProxy)
-to filter HTTP contents.
+to filter HTTP/S contents.
 
 ---------------
 
