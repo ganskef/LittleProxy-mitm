@@ -1,6 +1,7 @@
 package org.littleshoot.proxy.mitm;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -62,6 +63,7 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.bc.BcX509ExtensionUtils;
@@ -271,17 +273,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         }
 
         final Certificate cert = keystore.getCertificate(authority.alias());
-        Writer sw = null;
-        JcaPEMWriter pw = null;
-        try {
-            sw = new FileWriter(authority.aliasFile(".pem"));
-            pw = new JcaPEMWriter(sw);
-            pw.writeObject(cert);
-            pw.flush();
-        } finally {
-            IOUtils.closeQuietly(pw);
-            IOUtils.closeQuietly(sw);
-        }
+        exportPem(cert, authority.aliasFile(".pem"));
     }
 
     /**
@@ -513,6 +505,31 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
 
         final MillisecondsDuration duration = new MillisecondsDuration();
 
+        final KeyStore ks = createServerCertificate(commonName,
+                subjectAlternativeNames);
+
+        // ------------------- from getTunnelSSLSocketFactory ------------------
+
+        SSLContext ctx = SSLContext.getInstance(SSL_CONTEXT_PROTOCOL);
+        String algorithm = KeyManagerFactory.getDefaultAlgorithm();
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
+
+        kmf.init(ks, authority.password());
+        SecureRandom random = new SecureRandom();
+        random.setSeed(System.currentTimeMillis());
+        ctx.init(kmf.getKeyManagers(), null, random);
+        LOG.info("Impersonated {} in {}ms", commonName, duration);
+        return ctx;
+    }
+
+    private KeyStore createServerCertificate(String commonName,
+            Collection<List<?>> subjectAlternativeNames)
+            throws NoSuchAlgorithmException, IOException,
+            CertificateEncodingException, CertIOException,
+            OperatorCreationException, CertificateException,
+            CertificateExpiredException, CertificateNotYetValidException,
+            InvalidKeyException, NoSuchProviderException, SignatureException,
+            KeyStoreException {
         final KeyPair mykp = createKeyPair(FAKE_KEYSIZE);
         final PrivateKey privKey = mykp.getPrivate();
         final PublicKey pubKey = mykp.getPublic();
@@ -571,19 +588,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         chain[1] = this.caCert;
         chain[0] = cert;
         ks.setKeyEntry(authority.alias(), privKey, authority.password(), chain);
-
-        // ------------------- from getTunnelSSLSocketFactory ------------------
-
-        SSLContext ctx = SSLContext.getInstance(SSL_CONTEXT_PROTOCOL);
-        String algorithm = KeyManagerFactory.getDefaultAlgorithm();
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
-
-        kmf.init(ks, authority.password());
-        SecureRandom random = new SecureRandom();
-        random.setSeed(System.currentTimeMillis());
-        ctx.init(kmf.getKeyManagers(), null, random);
-        LOG.info("Impersonated {} in {}ms", commonName, duration);
-        return ctx;
+        return ks;
     }
 
     private KeyPair createKeyPair(int keysize) throws NoSuchAlgorithmException {
@@ -596,6 +601,40 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         final KeyPair keypair = keyGen.generateKeyPair();
         return keypair;
     }
+
+    public void initializeServerCertificates(String commonName,
+            Collection<List<?>> subjectAlternativeNames)
+            throws CertificateEncodingException, CertificateExpiredException,
+            CertificateNotYetValidException, InvalidKeyException,
+            NoSuchAlgorithmException, CertIOException,
+            OperatorCreationException, CertificateException,
+            NoSuchProviderException, SignatureException, KeyStoreException,
+            IOException, UnrecoverableKeyException {
+
+        KeyStore ks = createServerCertificate(commonName,
+                subjectAlternativeNames);
+        PrivateKey key = (PrivateKey) ks.getKey(authority.alias(),
+                authority.password());
+        exportPem(key, authority.aliasFile("-" + commonName + "-key.pem"));
+
+        Certificate cert = ks.getCertificate(authority.alias());
+        exportPem(cert, authority.aliasFile("-" + commonName + "-cert.pem"));
+    }
+
+    private void exportPem(Object cert, File exportFile) throws IOException {
+        Writer sw = null;
+        JcaPEMWriter pw = null;
+        try {
+            sw = new FileWriter(exportFile);
+            pw = new JcaPEMWriter(sw);
+            pw.writeObject(cert);
+            pw.flush();
+        } finally {
+            IOUtils.closeQuietly(pw);
+            IOUtils.closeQuietly(sw);
+        }
+    }
+
 }
 
 class MillisecondsDuration {
