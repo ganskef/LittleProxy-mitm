@@ -25,72 +25,83 @@ import de.ganskef.test.IProxy;
 
 public class LittleProxyMitmProxy implements IProxy {
 
-	private static final Logger log = LoggerFactory.getLogger(LittleProxyMitmProxy.class);
+    private static final Logger log = LoggerFactory
+            .getLogger(LittleProxyMitmProxy.class);
 
-	private HttpProxyServer server;
+    private HttpProxyServer server;
 
-	private final int proxyPort;
+    private final int proxyPort;
 
-	public LittleProxyMitmProxy() {
-		this(9091);
-	}
+    public LittleProxyMitmProxy() {
+        this(9091);
+    }
 
-	public LittleProxyMitmProxy(int proxyPort) {
-		this.proxyPort = proxyPort;
-	}
+    public LittleProxyMitmProxy(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
 
-	@Override
-	public int getProxyPort() {
-		return proxyPort;
-	}
+    @Override
+    public int getProxyPort() {
+        return proxyPort;
+    }
 
-	@Override
-	public IProxy start() {
-		if (server != null) {
-			server.stop();
-		}
-		server = bootstrap().start();
-		return this;
-	}
+    @Override
+    public IProxy start() {
+        if (server != null) {
+            server.stop();
+        }
+        server = bootstrap().start();
+        return this;
+    }
 
-	protected HttpProxyServerBootstrap bootstrap() {
-		HttpFiltersSource filtersSource = new HttpFiltersSourceAdapter();
-		ActivityTracker activityTracker = new ActivityTrackerAdapter() {
-			@Override
-			public void bytesSentToClient(FlowContext flowContext, int numberOfBytes) {
-				log.warn("Bytes sent to client {}", numberOfBytes);
-			}
+    protected HttpProxyServerBootstrap bootstrap() {
+        HttpFiltersSource filtersSource = new HttpFiltersSourceAdapter();
+        ActivityTracker activityTracker = new ActivityTrackerAdapter() {
+            @Override
+            public void bytesSentToClient(FlowContext flowContext,
+                    int numberOfBytes) {
+                log.warn("Bytes sent to client {}", numberOfBytes);
+            }
 
-			@Override
-			public void responseSentToClient(FlowContext flowContext, HttpResponse httpResponse) {
-				log.warn("Response sent to client {}", httpResponse);
-				if (httpResponse instanceof HttpContent) {
-					HttpContent content = (HttpContent) httpResponse;
-					ByteBuf buffer = content.content();
-					log.warn("Response sent to client {} {}", buffer.capacity(), buffer.nioBufferCount());
-				}
-			}
-		};
-		try {
-			return DefaultHttpProxyServer.bootstrap() //
-					.plusActivityTracker(activityTracker) //
-					.withFiltersSource(filtersSource) //
-					.withManInTheMiddle(new HostNameMitmManager(new Authority())).withPort(proxyPort);
+            @Override
+            public void responseSentToClient(FlowContext flowContext,
+                    HttpResponse httpResponse) {
+                log.warn("Response sent to client {}", httpResponse);
+                if (httpResponse instanceof HttpContent) {
+                    HttpContent content = (HttpContent) httpResponse;
+                    ByteBuf buffer = content.content();
+                    log.warn("Response sent to client {} {}",
+                            buffer.capacity(), buffer.nioBufferCount());
+                }
+            }
+        };
+        try {
+            return DefaultHttpProxyServer
+                    .bootstrap()
+                    //
+                    .plusActivityTracker(activityTracker)
+                    //
+                    .withFiltersSource(filtersSource)
+                    //
+                    .withManInTheMiddle(
+                            new HostNameMitmManager(new Authority()))
+                    .withPort(proxyPort);
 
-		} catch (RootCertificateException e) {
-			throw new IllegalStateException("Could not enable Man-In-The-Middle", e);
-		}
-	}
+        } catch (RootCertificateException e) {
+            throw new IllegalStateException(
+                    "Could not enable Man-In-The-Middle", e);
+        }
+    }
 
-	@Override
-	public void stop() {
-		server.stop();
-	}
+    @Override
+    public void stop() {
+        server.stop();
+    }
 
-	@Override
-	public java.net.Proxy getHttpProxySettings() {
-		InetSocketAddress isa = server.getListenAddress();
-		return new java.net.Proxy(Type.HTTP, isa);
-	}
+    @Override
+    public java.net.Proxy getHttpProxySettings() {
+        InetSocketAddress isa = server.getListenAddress();
+        return new java.net.Proxy(Type.HTTP, isa);
+    }
 
 }

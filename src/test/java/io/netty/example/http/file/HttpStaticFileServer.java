@@ -28,15 +28,17 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 
 public final class HttpStaticFileServer {
 
-    static final boolean SSL = true; //System.getProperty("ssl") != null;
-    static final int PORT = 8001;//Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
+    static final boolean SSL = true; // System.getProperty("ssl") != null;
+    static final int PORT = 8001;// Integer.parseInt(System.getProperty("port",
+                                 // SSL? "8443" : "8080"));
 
     public static void main(String[] args) throws Exception {
         // Configure SSL.
         final SslContext sslCtx;
         if (SSL) {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
-            sslCtx = SslContext.newServerContext(SslProvider.JDK, ssc.certificate(), ssc.privateKey());
+            sslCtx = SslContext.newServerContext(SslProvider.JDK,
+                    ssc.certificate(), ssc.privateKey());
         } else {
             sslCtx = null;
         }
@@ -46,14 +48,14 @@ public final class HttpStaticFileServer {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class)
-             .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new HttpStaticFileServerInitializer(sslCtx));
+                    .channel(NioServerSocketChannel.class)
+                    .handler(new LoggingHandler(LogLevel.INFO))
+                    .childHandler(new HttpStaticFileServerInitializer(sslCtx));
 
             Channel ch = b.bind(PORT).sync().channel();
 
-            System.err.println("Open your web browser and navigate to " +
-                    (SSL? "https" : "http") + "://127.0.0.1:" + PORT + '/');
+            System.err.println("Open your web browser and navigate to "
+                    + (SSL ? "https" : "http") + "://127.0.0.1:" + PORT + '/');
 
             ch.closeFuture().sync();
         } finally {

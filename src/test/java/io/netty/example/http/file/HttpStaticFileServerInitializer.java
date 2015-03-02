@@ -23,7 +23,8 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
-public class HttpStaticFileServerInitializer extends ChannelInitializer<SocketChannel> {
+public class HttpStaticFileServerInitializer extends
+        ChannelInitializer<SocketChannel> {
 
     private final SslContext sslCtx;
 
@@ -31,7 +32,7 @@ public class HttpStaticFileServerInitializer extends ChannelInitializer<SocketCh
         this.sslCtx = sslCtx;
     }
 
-	@Override
+    @Override
     public void initChannel(SocketChannel ch) {
         ChannelPipeline pipeline = ch.pipeline();
         if (sslCtx != null) {

@@ -15,31 +15,39 @@ import org.littleshoot.proxy.MitmManager;
  */
 public class HostNameMitmManager implements MitmManager {
 
-	private BouncyCastleSslEngineSource sslEngineSource;
+    private BouncyCastleSslEngineSource sslEngineSource;
 
-	public HostNameMitmManager() throws RootCertificateException {
-		this(new Authority());
-	}
+    public HostNameMitmManager() throws RootCertificateException {
+        this(new Authority());
+    }
 
-	public HostNameMitmManager(Authority authority) throws RootCertificateException {
-		try {
-			sslEngineSource = new BouncyCastleSslEngineSource(authority, true, true);
-		} catch (final Exception e) {
-			throw new RootCertificateException("Errors during assembling root CA.", e);
-		}
-	}
+    public HostNameMitmManager(Authority authority)
+            throws RootCertificateException {
+        try {
+            sslEngineSource = new BouncyCastleSslEngineSource(authority, true,
+                    true);
+        } catch (final Exception e) {
+            throw new RootCertificateException(
+                    "Errors during assembling root CA.", e);
+        }
+    }
 
-	public SSLEngine serverSslEngine() {
-		return sslEngineSource.newSslEngine();
-	}
+    public SSLEngine serverSslEngine() {
+        return sslEngineSource.newSslEngine();
+    }
 
-	public SSLEngine clientSslEngineFor(SSLSession serverSslSession, String serverHostAndPort) {
-		try {
-			String serverName = serverHostAndPort.split(":")[0];
-			Collection<List<?>> subjectAlternativeNames = Collections.emptyList();
-			return sslEngineSource.createCertForHost(serverName, subjectAlternativeNames);
-		} catch (Exception e) {
-			throw new FakeCertificateException("Creation dynamic certificate failed for " + serverHostAndPort, e);
-		}
-	}
+    public SSLEngine clientSslEngineFor(SSLSession serverSslSession,
+            String serverHostAndPort) {
+        try {
+            String serverName = serverHostAndPort.split(":")[0];
+            Collection<List<?>> subjectAlternativeNames = Collections
+                    .emptyList();
+            return sslEngineSource.createCertForHost(serverName,
+                    subjectAlternativeNames);
+        } catch (Exception e) {
+            throw new FakeCertificateException(
+                    "Creation dynamic certificate failed for "
+                            + serverHostAndPort, e);
+        }
+    }
 }
