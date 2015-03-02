@@ -11,6 +11,7 @@ You have to clone the modified version of LittleProxy to build LittleProxy-mitm.
 $ git clone git://github.com/ganskef/LittleProxy.git
 $ cd LittleProxy
 $ mvn clean install
+$ cd ..
 $ git clone git://github.com/ganskef/LittleProxy-mitm.git
 $ cd LittleProxy-mitm
 $ mvn clean install
