@@ -4,9 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpResponse;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy.Type;
-
 import org.littleshoot.proxy.ActivityTracker;
 import org.littleshoot.proxy.ActivityTrackerAdapter;
 import org.littleshoot.proxy.FlowContext;
@@ -15,9 +12,6 @@ import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
-import org.littleshoot.proxy.mitm.Authority;
-import org.littleshoot.proxy.mitm.HostNameMitmManager;
-import org.littleshoot.proxy.mitm.RootCertificateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,11 +72,8 @@ public class LittleProxyMitmProxy implements IProxy {
         try {
             return DefaultHttpProxyServer
                     .bootstrap()
-                    //
                     .plusActivityTracker(activityTracker)
-                    //
                     .withFiltersSource(filtersSource)
-                    //
                     .withManInTheMiddle(
                             new HostNameMitmManager(new Authority()))
                     .withPort(proxyPort);
@@ -96,12 +87,6 @@ public class LittleProxyMitmProxy implements IProxy {
     @Override
     public void stop() {
         server.stop();
-    }
-
-    @Override
-    public java.net.Proxy getHttpProxySettings() {
-        InetSocketAddress isa = server.getListenAddress();
-        return new java.net.Proxy(Type.HTTP, isa);
     }
 
 }

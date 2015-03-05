@@ -3,13 +3,10 @@ package de.ganskef.test;
 import io.netty.handler.ssl.SslContext;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 import org.littleshoot.proxy.mitm.Authority;
 import org.littleshoot.proxy.mitm.BouncyCastleSslEngineSource;
+import org.littleshoot.proxy.mitm.SubjectAlternativeNameHolder;
 
 public class SecureServer extends Server {
 
@@ -18,20 +15,18 @@ public class SecureServer extends Server {
     }
 
     public Server start() throws Exception {
-        // if (!new File("littleproxy-mitm-localhost-cert.pem").isFile()
-        // && !new File("littleproxy-mitm-localhost-key.pem").isFile()) {
         BouncyCastleSslEngineSource es = new BouncyCastleSslEngineSource(
                 new Authority(), true, true);
-        Collection<List<?>> subjectAlternativeNames = new ArrayList<List<?>>();
-        subjectAlternativeNames.add(Arrays
-                .asList(new Object[] { 2, "127.0.0.1" }));
-        es.initializeServerCertificates("localhost", subjectAlternativeNames);
-        // }
+        SubjectAlternativeNameHolder san = new SubjectAlternativeNameHolder();
+        // san.addDomainName("localhost");
+        // san.addDomainName("*.local");
+        // san.addIpAddress("127.0.0.1");
+        es.initializeServerCertificates("localhost", san);
         File certChainFile = new File("littleproxy-mitm-localhost-cert.pem");
         File keyFile = new File("littleproxy-mitm-localhost-key.pem");
         SslContext sslCtx = SslContext.newServerContext(certChainFile, keyFile);
 
-        // SelfSignedCertificate ssc = new SelfSignedCertificate();
+        // SelfSignedCertificate ssc = new SelfSignedCertificate("localhost");
         // SslContext sslCtx = SslContext.newServerContext(SslProvider.JDK,
         // ssc.certificate(), ssc.privateKey());
         return super.start(sslCtx);
@@ -40,9 +35,9 @@ public class SecureServer extends Server {
     @Override
     public String getBaseUrl() {
         if (getPort() == 443) {
-            return ("https://127.0.0.1");
+            return ("https://localhost");
         } else {
-            return ("https://127.0.0.1:" + getPort());
+            return ("https://localhost:" + getPort());
         }
     }
 

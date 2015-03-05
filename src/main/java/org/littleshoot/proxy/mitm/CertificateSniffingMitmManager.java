@@ -2,10 +2,6 @@ package org.littleshoot.proxy.mitm;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -65,19 +61,16 @@ public class CertificateSniffingMitmManager implements MitmManager {
             // rejected. A Bug?
             //
             String serverName = serverHostAndPort.split(":")[0];
-            Collection<List<?>> subjectAlternativeNames = new ArrayList<List<?>>();
+            SubjectAlternativeNameHolder san = new SubjectAlternativeNameHolder();
 
             // This is an ugly trick to add the host name to the truncated list.
             // I's obsolete and names could be duplicated in this way.
             //
-            subjectAlternativeNames.addAll(upstreamCert
-                    .getSubjectAlternativeNames());
-            subjectAlternativeNames.add(Arrays.asList(new Object[] { 2,
-                    serverName }));
+            san.addAll(upstreamCert.getSubjectAlternativeNames());
+            san.addDomainName(serverName);
 
-            LOG.debug("Subject Alternative Names: {}", subjectAlternativeNames);
-            return sslEngineSource.createCertForHost(commonName,
-                    subjectAlternativeNames);
+            LOG.debug("Subject Alternative Names: {}", san);
+            return sslEngineSource.createCertForHost(commonName, san);
 
         } catch (Exception e) {
             throw new FakeCertificateException(

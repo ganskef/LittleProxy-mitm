@@ -1,9 +1,5 @@
 package org.littleshoot.proxy.mitm;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSession;
 
@@ -40,10 +36,8 @@ public class HostNameMitmManager implements MitmManager {
             String serverHostAndPort) {
         try {
             String serverName = serverHostAndPort.split(":")[0];
-            Collection<List<?>> subjectAlternativeNames = Collections
-                    .emptyList();
-            return sslEngineSource.createCertForHost(serverName,
-                    subjectAlternativeNames);
+            SubjectAlternativeNameHolder san = new SubjectAlternativeNameHolder();
+            return sslEngineSource.createCertForHost(serverName, san);
         } catch (Exception e) {
             throw new FakeCertificateException(
                     "Creation dynamic certificate failed for "

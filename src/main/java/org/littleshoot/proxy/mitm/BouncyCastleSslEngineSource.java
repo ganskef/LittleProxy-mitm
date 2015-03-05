@@ -30,10 +30,7 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -58,7 +55,6 @@ import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
@@ -462,7 +458,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      *      String)
      */
     public SSLEngine createCertForHost(final String commonName,
-            final Collection<List<?>> subjectAlternativeNames)
+            final SubjectAlternativeNameHolder subjectAlternativeNames)
             throws CertificateEncodingException, InvalidKeyException,
             CertificateExpiredException, CertificateNotYetValidException,
             UnrecoverableKeyException, KeyManagementException,
@@ -495,7 +491,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
     }
 
     private SSLContext createServerContext(String commonName,
-            Collection<List<?>> subjectAlternativeNames)
+            SubjectAlternativeNameHolder subjectAlternativeNames)
             throws NoSuchAlgorithmException, IOException,
             CertificateEncodingException, InvalidKeyException,
             OperatorCreationException, CertificateException,
@@ -523,7 +519,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
     }
 
     private KeyStore createServerCertificate(String commonName,
-            Collection<List<?>> subjectAlternativeNames)
+            SubjectAlternativeNameHolder subjectAlternativeNames)
             throws NoSuchAlgorithmException, IOException,
             CertificateEncodingException, CertIOException,
             OperatorCreationException, CertificateException,
@@ -556,19 +552,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         certGen.addExtension(Extension.basicConstraints, false,
                 new BasicConstraints(false));
 
-        if (!subjectAlternativeNames.isEmpty()) {
-            ASN1EncodableVector eku = new ASN1EncodableVector();
-            Iterator<List<?>> it = subjectAlternativeNames.iterator();
-            while (it.hasNext()) {
-                final List<?> each = it.next();
-                final String subjectAlternativeName = String.valueOf(each
-                        .get(1));
-                final int tag = Integer.parseInt(String.valueOf(each.get(0)));
-                eku.add(new GeneralName(tag, subjectAlternativeName));
-            }
-            DERSequence seq = new DERSequence(eku);
-            certGen.addExtension(Extension.subjectAlternativeName, false, seq);
-        }
+        subjectAlternativeNames.fillInto(certGen);
 
         final ContentSigner sigGen = new JcaContentSignerBuilder(
                 SIGNATURE_ALGORITHM).setProvider("BC").build(caPrivKey);
@@ -603,7 +587,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
     }
 
     public void initializeServerCertificates(String commonName,
-            Collection<List<?>> subjectAlternativeNames)
+            SubjectAlternativeNameHolder subjectAlternativeNames)
             throws CertificateEncodingException, CertificateExpiredException,
             CertificateNotYetValidException, InvalidKeyException,
             NoSuchAlgorithmException, CertIOException,
