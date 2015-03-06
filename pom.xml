@@ -15,7 +15,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<github.global.server>github</github.global.server>
-		<skipTests>true</skipTests>
+		<skipTests>false</skipTests>
 	</properties>
 
 	<organization>
@@ -56,16 +56,15 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 	<dependencies>
 
 		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- Use proven Netty version 4.0.24.Final for tests! -->
-		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-codec-http</artifactId>
-			<version>4.0.24.Final</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -114,9 +113,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 					<showSuccess>false</showSuccess>
 					<forkCount>1</forkCount>
 					<reuseForks>true</reuseForks>
-					<argLine>-javaagent:pginstrument-0.1.0-shadow.jar
-						-Xbootclasspath/a:pginstrument-0.1.0-shadow.jar
-						-Dpginstrument.outfile=LittleProxy.pro</argLine>
+					<argLine></argLine>
 				</configuration>
 			</plugin>
 

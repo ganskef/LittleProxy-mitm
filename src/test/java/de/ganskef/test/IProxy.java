@@ -8,6 +8,4 @@ public interface IProxy {
 
     public abstract void stop();
 
-    public abstract java.net.Proxy getHttpProxySettings();
-
 }
