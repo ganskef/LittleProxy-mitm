@@ -215,16 +215,16 @@ public class HttpStaticFileServerHandler extends
             public void operationProgressed(ChannelProgressiveFuture future,
                     long progress, long total) {
                 if (total < 0) { // total unknown
-                    System.err.println(future.channel()
-                            + " Transfer progress: " + progress);
+//                    System.err.println(future.channel()
+//                            + " Transfer progress: " + progress);
                 } else {
-                    System.err.println(future.channel()
-                            + " Transfer progress: " + progress + " / " + total);
+//                    System.err.println(future.channel()
+//                            + " Transfer progress: " + progress + " / " + total);
                 }
             }
 
             public void operationComplete(ChannelProgressiveFuture future) {
-                System.err.println(future.channel() + " Transfer complete.");
+//                System.err.println(future.channel() + " Transfer complete.");
             }
         });
 
