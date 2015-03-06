@@ -59,22 +59,22 @@ public class Client {
             clientBuilder.setSSLSocketFactory(sslsf);
         }
         if (routePlanner != null) {
-            clientBuilder.setRoutePlanner(routePlanner).build();
+            clientBuilder.setRoutePlanner(routePlanner);
         }
         CloseableHttpClient httpclient = clientBuilder.build();
 
         HttpGet httpGet = new HttpGet(url);
-        CloseableHttpResponse response1 = httpclient.execute(httpGet);
+        CloseableHttpResponse response = httpclient.execute(httpGet);
         InputStream input = null;
         OutputStream output = null;
         try {
-            HttpEntity entity1 = response1.getEntity();
-            input = entity1.getContent();
+            HttpEntity entity = response.getEntity();
+            input = entity.getContent();
             output = new FileOutputStream(target);
             IOUtils.copy(input, output);
-            EntityUtils.consume(entity1);
+            EntityUtils.consume(entity);
         } finally {
-            response1.close();
+            response.close();
             IOUtils.closeQuietly(output);
             IOUtils.closeQuietly(input);
         }
