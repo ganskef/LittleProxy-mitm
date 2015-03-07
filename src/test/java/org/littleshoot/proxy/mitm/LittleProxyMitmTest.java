@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.ganskef.test.Client;
+import de.ganskef.test.Client2;
 import de.ganskef.test.SecureServer;
 import de.ganskef.test.Server;
 
@@ -81,12 +82,11 @@ public class LittleProxyMitmTest {
         assertEquals("Offline response", FileUtils.readFileToString(proxied));
     }
 
-    // FIXME Client must handshake with proxy or this test will fail
-    // @Test
+    @Test
     public void testCachedResponseSecured() throws Exception {
         proxy.setConnectionLimited();
         String url = "https://somehost/somepath";
-        File proxied = new Client().get(url, proxy);
+        File proxied = new Client2().get(url, proxy);
         assertEquals("Offline response", FileUtils.readFileToString(proxied));
     }
 
