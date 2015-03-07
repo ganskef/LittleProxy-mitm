@@ -34,7 +34,11 @@ public class SecureServer extends Server {
 
     @Override
     public String getBaseUrl() {
-        return ("https://localhost:" + getPort());
+        if (getPort() == 443) {
+            return ("https://localhost");
+        } else {
+            return ("https://localhost:" + getPort());
+        }
     }
 
     public static void main(String[] args) throws Exception {

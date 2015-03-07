@@ -43,7 +43,11 @@ public class Server {
     }
 
     public String getBaseUrl() {
-        return ("http://127.0.0.1");
+        if (port == 80) {
+            return ("http://127.0.0.1");
+        } else {
+            return ("http://127.0.0.1:" + port);
+        }
     }
 
     public static void main(String[] args) throws Exception {
