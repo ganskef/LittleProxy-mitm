@@ -56,6 +56,14 @@ public class Client2 {
     public File get(URI uri, String url, String proxyHost, int proxyPort,
             final String target) throws Exception {
 
+        if (proxyPort == -1) {
+            if ("https".equalsIgnoreCase(uri.getScheme())) {
+                proxyPort = 443;
+            } else {
+                proxyPort = 80;
+            }
+        }
+
         final Client2Handler handler = new Client2Handler(target);
         EventLoopGroup group = new NioEventLoopGroup();
         try {
