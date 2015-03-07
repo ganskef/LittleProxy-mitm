@@ -14,6 +14,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -22,25 +23,25 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
-import org.apache.http.impl.conn.DefaultRoutePlanner;
 import org.apache.http.util.EntityUtils;
 
 public class Client {
 
     public File get(String url, IProxy proxy) throws Exception {
-        HttpHost testProxy = new HttpHost("localhost", proxy.getProxyPort());
-        DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
-                testProxy);
-        return get(url, routePlanner, "proxy.out");
+        HttpHost proxyHost = new HttpHost("localhost", proxy.getProxyPort());
+        return get(url, proxyHost, "proxy.out");
     }
 
     public File get(String url) throws Exception {
-        return get(url, (DefaultRoutePlanner) null, "direct.out");
+        return get(url, (HttpHost) null, "direct.out");
     }
 
-    private File get(String url, DefaultRoutePlanner routePlanner, String target)
+    private File get(String url, HttpHost proxyHost, String target)
             throws Exception {
+        File result = new File(target);
+        if (result.exists() && !result.delete()) {
+            throw new IllegalStateException("Coudn't be deleted " + result);
+        }
         URI uri = new URI(url);
         HttpClientBuilder clientBuilder = HttpClients.custom();
         if ("https".equalsIgnoreCase(uri.getScheme())) {
@@ -58,13 +59,15 @@ public class Client {
                     sslcontext);
             clientBuilder.setSSLSocketFactory(sslsf);
         }
-        if (routePlanner != null) {
-            clientBuilder.setRoutePlanner(routePlanner);
-        }
         CloseableHttpClient httpclient = clientBuilder.build();
 
-        HttpGet httpGet = new HttpGet(url);
-        CloseableHttpResponse response = httpclient.execute(httpGet);
+        HttpGet request = new HttpGet(url);
+        if (proxyHost != null) {
+            RequestConfig config = RequestConfig.custom().setProxy(proxyHost)
+                    .build();
+            request.setConfig(config);
+        }
+        CloseableHttpResponse response = httpclient.execute(request);
         InputStream input = null;
         OutputStream output = null;
         try {
@@ -78,7 +81,7 @@ public class Client {
             IOUtils.closeQuietly(output);
             IOUtils.closeQuietly(input);
         }
-        return new File(target);
+        return result;
     }
 
     public static void main(String[] args) throws Exception {
