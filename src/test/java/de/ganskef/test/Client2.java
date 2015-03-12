@@ -1,107 +1,115 @@
 package de.ganskef.test;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.DefaultHttpRequest;
-import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpContentDecompressor;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public class Client2 {
 
-    private final LogLevel channelLogLevel;
-
-    public Client2() {
-        this(LogLevel.TRACE);
-    }
-
-    public Client2(LogLevel channelLogLevel) {
-        this.channelLogLevel = channelLogLevel;
-    }
-
-    public File get(String url, IProxy proxy, String target) throws Exception {
-        return get(new URI(url), url, "127.0.0.1", proxy.getProxyPort(), target);
-    }
+    private static final int PROXY_PORT_UNDEFINED = -1;
 
     public File get(String url, IProxy proxy) throws Exception {
-        return get(url, proxy, "proxy.out");
+        return get(new URI(url), proxy.getProxyPort());
     }
 
     public File get(String url) throws Exception {
-        return get(url, "client.out");
-    }
-
-    public File get(String url, String target) throws Exception {
         URI uri = new URI(url);
-        String host = uri.getHost();
-        int port = uri.getPort();
-        return get(uri, uri.getRawPath(), host, port, target);
+        return get(uri, PROXY_PORT_UNDEFINED);
     }
 
-    public File get(URI uri, String url, String proxyHost, int proxyPort,
-            final String target) throws Exception {
-
-        if (proxyPort == -1) {
-            if ("https".equalsIgnoreCase(uri.getScheme())) {
-                proxyPort = 443;
-            } else {
-                proxyPort = 80;
-            }
+    public File get(URI uri, int proxyPort) throws Exception {
+        URLConnection con = createConnection(uri.toURL(), proxyPort);
+        final boolean ssl = "https".equalsIgnoreCase(uri.getScheme());
+        if (ssl) {
+            return callHttpsGet(con);
+        } else {
+            return callHttpGet(con);
         }
+    }
 
-        final Client2Handler handler = new Client2Handler(target);
-        EventLoopGroup group = new NioEventLoopGroup();
+    private File callHttpGet(URLConnection con) throws IOException {
+        con.connect();
+        return read(con);
+    }
+
+    private File callHttpsGet(URLConnection con)
+            throws GeneralSecurityException, IOException {
+        FileInputStream is = new FileInputStream(new File(
+                "littleproxy-mitm.p12"));
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        ks.load(is, "Be Your Own Lantern".toCharArray());
+        is.close();
+
+        String tma = TrustManagerFactory.getDefaultAlgorithm();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tma);
+        tmf.init(ks);
+        X509TrustManager defaultTrustManager = (X509TrustManager) tmf
+                .getTrustManagers()[0];
+
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, new TrustManager[] { defaultTrustManager }, null);
+        SSLSocketFactory sslSocketFactory = context.getSocketFactory();
+
+        ((HttpsURLConnection) con).setSSLSocketFactory(sslSocketFactory);
+        con.connect();
+        return read(con);
+    }
+
+    private URLConnection createConnection(URL url, int proxyPort)
+            throws MalformedURLException, IOException {
+        URLConnection result;
+        if (proxyPort != PROXY_PORT_UNDEFINED) {
+            SocketAddress sa = new InetSocketAddress(proxyPort);
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, sa);
+            result = url.openConnection(proxy);
+        } else {
+            result = url.openConnection();
+        }
+        return result;
+    }
+
+    private File read(URLConnection con) throws IOException {
+        String name = Client2.class.getSimpleName();
+        File result = File.createTempFile(name, ".out");
+        result.deleteOnExit();
+        OutputStream os = null;
+        InputStream is = null;
         try {
-            Bootstrap b = new Bootstrap();
-            b.group(group).channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel ch)
-                                throws Exception {
-                            ChannelPipeline p = ch.pipeline();
-                            p.addLast("log",
-                                    new LoggingHandler(channelLogLevel));
-                            p.addLast("codec", new HttpClientCodec());
-                            p.addLast("inflater", new HttpContentDecompressor());
-                            p.addLast("aggregator", new HttpObjectAggregator(
-                                    10 * 1024 * 1024));
-                            p.addLast("handler", handler);
-                        }
-                    });
-
-            Channel ch = b.connect(proxyHost, proxyPort).sync().channel();
-
-            HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1,
-                    HttpMethod.GET, url);
-            request.headers().set(HttpHeaders.Names.HOST, uri.getHost());
-            request.headers().set(HttpHeaders.Names.CONNECTION,
-                    HttpHeaders.Values.CLOSE);
-            request.headers().set(HttpHeaders.Names.ACCEPT_ENCODING,
-                    HttpHeaders.Values.GZIP);
-
-            ch.writeAndFlush(request);
-
-            ch.closeFuture().sync();
-
+            is = con.getInputStream();
+            os = new FileOutputStream(result);
+            IOUtils.copy(is, os);
         } finally {
-            group.shutdownGracefully();
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
         }
-        return handler.getFile();
+        return result;
+    }
+
+    public static void main(String[] args) throws Exception {
+        File result = new Client2().get("https://localhost:8083");
+        System.out.println(FileUtils.readFileToString(result));
     }
 
 }

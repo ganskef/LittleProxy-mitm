@@ -12,9 +12,11 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
+import org.apache.log4j.xml.DOMConfigurator;
 import org.littleshoot.proxy.DefaultHostResolver;
 import org.littleshoot.proxy.HostResolver;
 import org.littleshoot.proxy.HttpFilters;
@@ -64,6 +66,11 @@ public class LittleProxyMitmProxy implements IProxy {
             public HttpFilters filterRequest(HttpRequest originalRequest,
                     ChannelHandlerContext ctx) {
                 return new HttpFiltersAdapter(originalRequest) {
+                    @Override
+                    public void proxyToServerConnectionSSLHandshakeStarted() {
+                        System.err
+                                .println("proxyToServerConnectionSSLHandshakeStarted()");
+                    }
 
                     /**
                      * This filter delivers special responses if connection
@@ -154,6 +161,24 @@ public class LittleProxyMitmProxy implements IProxy {
         HttpHeaders.setHeader(response, HttpHeaders.Names.CONTENT_TYPE,
                 "text/html");
         return response;
+    }
+
+    public static void main(final String... args) {
+        File log4jConfigurationFile = new File(
+                "src/test/resources/log4j.xml");
+        if (log4jConfigurationFile.exists()) {
+            DOMConfigurator.configureAndWatch(
+                    log4jConfigurationFile.getAbsolutePath(), 15);
+        }
+        try {
+
+            LittleProxyMitmProxy conn = new LittleProxyMitmProxy(9090).start();
+            conn.setConnectionLimited();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
 }
