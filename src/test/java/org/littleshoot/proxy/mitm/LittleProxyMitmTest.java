@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.ganskef.test.Client2;
+import de.ganskef.test.Client;
 import de.ganskef.test.SecureServer;
 import de.ganskef.test.Server;
 
@@ -49,9 +49,9 @@ public class LittleProxyMitmTest {
         String url = server.getBaseUrl() + "/" + IMAGE_PATH;
         File direct = //
         // new File(IMAGE_PATH);
-        new Client2().get(url);
+        new Client().get(url);
 
-        File proxied = new Client2().get(url, proxy);
+        File proxied = new Client().get(url, proxy);
         assertEquals(direct.length(), proxied.length());
     }
 
@@ -60,9 +60,9 @@ public class LittleProxyMitmTest {
         String url = secureServer.getBaseUrl() + "/" + IMAGE_PATH;
         File direct = //
         // new File(IMAGE_PATH);
-        new Client2().get(url);
+        new Client().get(url);
 
-        File proxied = new Client2().get(url, proxy);
+        File proxied = new Client().get(url, proxy);
         assertEquals(direct.length(), proxied.length());
     }
 
@@ -70,9 +70,9 @@ public class LittleProxyMitmTest {
     public void testOnlineTextSecured() throws Exception {
         String url = "https://www.google.com/humans.txt";
         try {
-            File direct = new Client2().get(url);
+            File direct = new Client().get(url);
 
-            File proxied = new Client2().get(url, proxy);
+            File proxied = new Client().get(url, proxy);
             assertEquals(direct.length(), proxied.length());
 
         } catch (ConnectException ignored) {
@@ -88,18 +88,15 @@ public class LittleProxyMitmTest {
     public void testCachedResponse() throws Exception {
         proxy.setConnectionLimited();
         String url = "http://somehost/somepath";
-        File proxied = new Client2().get(url, proxy);
+        File proxied = new Client().get(url, proxy);
         assertEquals("Offline response", FileUtils.readFileToString(proxied));
     }
 
-    // This works with Cromium and Mozilla Firefox browser, but fails with hc
-    // and with URLConnection too. The handshake is done with the target host
-    // instead of doing it with the proxy. What's wrong here?
-    // @Test
+    @Test
     public void testCachedResponseSecured() throws Exception {
         proxy.setConnectionLimited();
         String url = "https://somehost/somepath";
-        File proxied = new Client2().get(url, proxy);
+        File proxied = new Client().get(url, proxy);
         assertEquals("Offline response", FileUtils.readFileToString(proxied));
     }
 

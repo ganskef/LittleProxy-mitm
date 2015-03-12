@@ -26,6 +26,7 @@ import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
+import org.littleshoot.proxy.impl.ProxyUtils;
 
 import de.ganskef.test.IProxy;
 
@@ -36,10 +37,6 @@ public class LittleProxyMitmProxy implements IProxy {
     private final int proxyPort;
 
     private boolean connectionLimited;
-
-    public LittleProxyMitmProxy() {
-        this(9091);
-    }
 
     public LittleProxyMitmProxy(int proxyPort) {
         this.proxyPort = proxyPort;
@@ -65,12 +62,15 @@ public class LittleProxyMitmProxy implements IProxy {
             @Override
             public HttpFilters filterRequest(HttpRequest originalRequest,
                     ChannelHandlerContext ctx) {
+
+                // The connect request must bypass the filter! Otherwise the
+                // handshake will fail.
+                //
+                if (ProxyUtils.isCONNECT(originalRequest)) {
+                    return new HttpFiltersAdapter(originalRequest);
+                }
+
                 return new HttpFiltersAdapter(originalRequest) {
-                    @Override
-                    public void proxyToServerConnectionSSLHandshakeStarted() {
-                        System.err
-                                .println("proxyToServerConnectionSSLHandshakeStarted()");
-                    }
 
                     /**
                      * This filter delivers special responses if connection
@@ -164,8 +164,7 @@ public class LittleProxyMitmProxy implements IProxy {
     }
 
     public static void main(final String... args) {
-        File log4jConfigurationFile = new File(
-                "src/test/resources/log4j.xml");
+        File log4jConfigurationFile = new File("src/test/resources/log4j.xml");
         if (log4jConfigurationFile.exists()) {
             DOMConfigurator.configureAndWatch(
                     log4jConfigurationFile.getAbsolutePath(), 15);
