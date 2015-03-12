@@ -85,6 +85,12 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 			<artifactId>littleproxy</artifactId>
 			<version>1.1.0-beta1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.10</version>
+		</dependency>
+
 	</dependencies>
 
 	<prerequisites>

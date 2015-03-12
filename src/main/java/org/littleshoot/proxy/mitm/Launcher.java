@@ -1,12 +1,20 @@
 package org.littleshoot.proxy.mitm;
 
+import java.io.File;
+
+import org.apache.log4j.xml.DOMConfigurator;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 public class Launcher {
 
     public static void main(final String... args) {
-        org.littleshoot.proxy.Launcher.pollLog4JConfigurationFileIfAvailable();
+        File log4jConfigurationFile = new File(
+                "src/test/resources/log4j.xml");
+        if (log4jConfigurationFile.exists()) {
+            DOMConfigurator.configureAndWatch(
+                    log4jConfigurationFile.getAbsolutePath(), 15);
+        }
         try {
             final int port = 9090;
 
