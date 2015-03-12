@@ -143,10 +143,6 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         return sslContext.createSSLEngine();
     }
 
-    public SSLContext getSslContext() {
-        return sslContext;
-    }
-
     private void initializeKeyStore() throws RootCertificateException,
             GeneralSecurityException, OperatorCreationException, IOException {
         if (authority.aliasFile(KEY_STORE_FILE_EXTENSION).exists()
