@@ -1,7 +1,8 @@
 package de.ganskef.test;
 
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,14 +15,11 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -56,20 +54,26 @@ public class Client {
 
     private File callHttpsGet(URLConnection con)
             throws GeneralSecurityException, IOException {
-        FileInputStream is = new FileInputStream(new File(
-                "littleproxy-mitm.p12"));
-        KeyStore ks = KeyStore.getInstance("PKCS12");
-        ks.load(is, "Be Your Own Lantern".toCharArray());
-        is.close();
-
-        String tma = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tma);
-        tmf.init(ks);
-        X509TrustManager defaultTrustManager = (X509TrustManager) tmf
-                .getTrustManagers()[0];
+        // FileInputStream is = new FileInputStream(new File(
+        // "littleproxy-mitm.p12"));
+        // KeyStore ks = KeyStore.getInstance("PKCS12");
+        // ks.load(is, "Be Your Own Lantern".toCharArray());
+        // is.close();
+        //
+        // String tma = TrustManagerFactory.getDefaultAlgorithm();
+        // TrustManagerFactory tmf = TrustManagerFactory.getInstance(tma);
+        // tmf.init(ks);
+        // X509TrustManager defaultTrustManager = (X509TrustManager) tmf
+        // .getTrustManagers()[0];
+        //
+        // SSLContext context = SSLContext.getInstance("TLS");
+        // context.init(null, new TrustManager[] { defaultTrustManager }, null);
 
         SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, new TrustManager[] { defaultTrustManager }, null);
+        TrustManager[] trustManagers = InsecureTrustManagerFactory.INSTANCE
+                .getTrustManagers();
+        context.init(null, trustManagers, null);
+
         SSLSocketFactory sslSocketFactory = context.getSocketFactory();
 
         ((HttpsURLConnection) con).setSSLSocketFactory(sslSocketFactory);
