@@ -5,7 +5,7 @@
 	<artifactId>littleproxy-mitm</artifactId>
 	<packaging>jar</packaging>
 	<version>1.1.0-beta1-SNAPSHOT</version>
-	<name>LittleProxy</name>
+	<name>LittleProxy - Man-In-The-Middle</name>
 	<description>LittleProxy is a high performance HTTP proxy written in Java and using the Netty networking framework.
 
 This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.</description>
@@ -46,7 +46,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:https://ganskef@github.com/adamfisk/LittleProxy-mitm.git</connection>
+		<connection>scm:git:https://ganskef@github.com/ganskef/LittleProxy-mitm.git</connection>
 		<developerConnection>scm:git:git@github.com:ganskef/LittleProxy-mitm</developerConnection>
 		<url>scm:git:git@github.com:ganskef/LittleProxy-mitm.git</url>
 	</scm>
