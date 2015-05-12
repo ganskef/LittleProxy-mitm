@@ -19,7 +19,7 @@ $ java -jar target/littleproxy-mitm-1.1.0-beta1-SNAPSHOT-shade.jar
 $ curl -k -x localhost:9090 https://www.google.com/humans.txt
 ```
 
-Please set your browsers proxy settings to 9090. Its hard coded in the simple Launcher class.
+Please set your browsers proxy settings to 9090. It's hard coded in the simple Launcher class.
 
 
 You can embed LittleProxy-mitm in your own projects through maven with the following:
