@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.org/ganskef/LittleProxy-parent.png?branch=master)
+[![Build Status](https://travis-ci.org/ganskef/LittleProxy-parent.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-parent)
 
 LittleProxy-mitm is an extension for the [LittleProxy](https://github.com/adamfisk/LittleProxy) which enables Man-In-The-Middle for HTTPS. See [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a detailed description of proxy interception processes.
 
