@@ -1,6 +1,8 @@
 package org.littleshoot.proxy.mitm;
 
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeThat;
 
 import java.io.File;
 import java.net.ConnectException;
@@ -14,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.ganskef.test.Client;
+import de.ganskef.test.IClient;
 import de.ganskef.test.SecureServer;
 import de.ganskef.test.Server;
 
@@ -44,51 +47,52 @@ public class LittleProxyMitmTest {
         proxy.setConnectionUnlimited();
     }
 
+    protected IClient newClient() {
+        return new Client();
+    }
+
     @Test
     public void testSimpleImage() throws Exception {
         String url = server.getBaseUrl() + "/" + IMAGE_PATH;
-        File direct = //
-        // new File(IMAGE_PATH);
-        new Client().get(url);
+        File direct = newClient().get(url);
 
-        File proxied = new Client().get(url, proxy);
+        File proxied = newClient().get(url, proxy);
         assertEquals(direct.length(), proxied.length());
     }
 
     @Test
     public void testSecuredImage() throws Exception {
         String url = secureServer.getBaseUrl() + "/" + IMAGE_PATH;
-        File direct = //
-        // new File(IMAGE_PATH);
-        new Client().get(url);
+        File direct = newClient().get(url);
 
-        File proxied = new Client().get(url, proxy);
+        File proxied = newClient().get(url, proxy);
         assertEquals(direct.length(), proxied.length());
     }
 
     @Test
     public void testOnlineTextSecured() throws Exception {
         String url = "https://www.google.com/humans.txt";
+        File direct = null;
         try {
-            File direct = new Client().get(url);
-
-            File proxied = new Client().get(url, proxy);
-            assertEquals(direct.length(), proxied.length());
-
+            direct = newClient().get(url);
         } catch (ConnectException ignored) {
-            System.out.println("Ignored testOnlineText while offline");
+            System.out.println("Ignored test while offline");
         } catch (UnknownHostException ignored) {
-            System.out.println("Ignored testOnlineText while offline");
+            System.out.println("Ignored test while offline");
         } catch (UnresolvedAddressException ignored) {
-            System.out.println("Ignored testOnlineText while offline");
+            System.out.println("Ignored test while offline");
         }
+        assumeThat("has internet connection", direct, notNullValue());
+
+        File proxied = newClient().get(url, proxy);
+        assertEquals(direct.length(), proxied.length());
     }
 
     @Test
     public void testCachedResponse() throws Exception {
         proxy.setConnectionLimited();
         String url = "http://somehost/somepath";
-        File proxied = new Client().get(url, proxy);
+        File proxied = newClient().get(url, proxy);
         assertEquals("Offline response", FileUtils.readFileToString(proxied));
     }
 
@@ -96,8 +100,28 @@ public class LittleProxyMitmTest {
     public void testCachedResponseSecured() throws Exception {
         proxy.setConnectionLimited();
         String url = "https://somehost/somepath";
-        File proxied = new Client().get(url, proxy);
+        File proxied = newClient().get(url, proxy);
         assertEquals("Offline response", FileUtils.readFileToString(proxied));
+    }
+
+    // XXX test failed up to Netty 4.1.0.Beta5, see LittleProxy #207
+    // @Test
+    public void testOnlineServerNameIndicationIssue207() throws Exception {
+        String url = "https://netty.io/";
+        File direct = null;
+        try {
+            direct = newClient().get(url);
+        } catch (ConnectException ignored) {
+            System.out.println("Ignored test while offline");
+        } catch (UnknownHostException ignored) {
+            System.out.println("Ignored test while offline");
+        } catch (UnresolvedAddressException ignored) {
+            System.out.println("Ignored test while offline");
+        }
+        assumeThat("has internet connection", direct, notNullValue());
+
+        File proxied = newClient().get(url, proxy);
+        assertEquals(direct.length(), proxied.length());
     }
 
 }

@@ -24,20 +24,22 @@ import javax.net.ssl.TrustManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-public class Client {
+public class Client implements IClient {
 
     private static final int PROXY_PORT_UNDEFINED = -1;
 
+    @Override
     public File get(String url, IProxy proxy) throws Exception {
         return get(new URI(url), proxy.getProxyPort());
     }
 
+    @Override
     public File get(String url) throws Exception {
         URI uri = new URI(url);
         return get(uri, PROXY_PORT_UNDEFINED);
     }
 
-    public File get(URI uri, int proxyPort) throws Exception {
+    private File get(URI uri, int proxyPort) throws Exception {
         URLConnection con = createConnection(uri.toURL(), proxyPort);
         final boolean ssl = "https".equalsIgnoreCase(uri.getScheme());
         if (ssl) {

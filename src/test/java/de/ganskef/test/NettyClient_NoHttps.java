@@ -34,7 +34,7 @@ import java.nio.channels.FileChannel;
 
 import org.apache.commons.io.IOUtils;
 
-public class NettyClient_NoHttps {
+public class NettyClient_NoHttps implements IClient {
 
     public File get(String url, IProxy proxy, String target) throws Exception {
         return get(new URI(url), url, "127.0.0.1", proxy.getProxyPort(), target);
@@ -155,6 +155,7 @@ class NettyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     public File getFile() {
         return file;
     }
+
 }
 
 class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
