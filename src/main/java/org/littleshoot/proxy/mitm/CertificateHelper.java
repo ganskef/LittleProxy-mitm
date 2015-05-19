@@ -108,7 +108,7 @@ public final class CertificateHelper {
         nameBuilder.addRDN(BCStyle.OU, authority.organizationalUnitName());
 
         X500Name issuer = nameBuilder.build();
-        BigInteger serial = BigInteger.valueOf(new Random().nextInt());
+        BigInteger serial = BigInteger.valueOf(initRandomSerial());
         X500Name subject = issuer;
         PublicKey pubKey = keyPair.getPublic();
 
@@ -167,7 +167,7 @@ public final class CertificateHelper {
 
         X500Name issuer = new X509CertificateHolder(caCert.getEncoded())
                 .getSubject();
-        BigInteger serial = BigInteger.valueOf(new Random().nextInt());
+        BigInteger serial = BigInteger.valueOf(initRandomSerial());
 
         X500NameBuilder name = new X500NameBuilder(BCStyle.INSTANCE);
         name.addRDN(BCStyle.CN, commonName);
@@ -251,6 +251,17 @@ public final class CertificateHelper {
         random.setSeed(System.currentTimeMillis());
         result.init(keyManagers, null, random);
         return result;
+    }
+
+    public static long initRandomSerial() {
+        final Random rnd = new Random();
+        rnd.setSeed(System.currentTimeMillis());
+        // prevent browser certificate caches, cause of doubled serial numbers
+        // using 48bit random number
+        long sl = ((long) rnd.nextInt()) << 32 | (rnd.nextInt() & 0xFFFFFFFFL);
+        // let reserve of 16 bit for increasing, serials have to be positive
+        sl = sl & 0x0000FFFFFFFFFFFFL;
+        return sl;
     }
 
 }

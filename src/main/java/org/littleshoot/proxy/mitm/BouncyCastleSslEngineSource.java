@@ -13,6 +13,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -165,7 +166,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         }
 
         Certificate cert = keystore.getCertificate(authority.alias());
-        exportPem(cert, authority.aliasFile(".pem"));
+        exportPem(authority.aliasFile(".pem"), cert);
     }
 
     private void initializeSSLContext() throws GeneralSecurityException,
@@ -180,7 +181,8 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
             trustManagers = InsecureTrustManagerFactory.INSTANCE
                     .getTrustManagers();
         } else {
-            trustManagers = CertificateHelper.getTrustManagers(ks);
+            // Provide null to use the key store from Java.
+            trustManagers = CertificateHelper.getTrustManagers(null);
         }
 
         KeyManager[] keyManagers = null;
@@ -285,20 +287,23 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
 
         PrivateKey key = (PrivateKey) ks.getKey(authority.alias(),
                 authority.password());
-        exportPem(key, authority.aliasFile("-" + commonName + "-key.pem"));
+        exportPem(authority.aliasFile("-" + commonName + "-key.pem"), key);
 
-        Certificate cert = ks.getCertificate(authority.alias());
-        exportPem(cert, authority.aliasFile("-" + commonName + "-cert.pem"));
+        Object[] certs = ks.getCertificateChain(authority.alias());
+        exportPem(authority.aliasFile("-" + commonName + "-cert.pem"), certs);
     }
 
-    private void exportPem(Object cert, File exportFile) throws IOException {
+    private void exportPem(File exportFile, Object... certs)
+            throws IOException, CertificateEncodingException {
         Writer sw = null;
         JcaPEMWriter pw = null;
         try {
             sw = new FileWriter(exportFile);
             pw = new JcaPEMWriter(sw);
-            pw.writeObject(cert);
-            pw.flush();
+            for (Object cert : certs) {
+                pw.writeObject(cert);
+                pw.flush();
+            }
         } finally {
             IOUtils.closeQuietly(pw);
             IOUtils.closeQuietly(sw);
