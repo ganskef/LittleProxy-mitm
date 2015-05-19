@@ -16,6 +16,12 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<github.global.server>github</github.global.server>
 		<skipTests>false</skipTests>
+		<!-- Versions should better be retrieved from a parent module. -->
+		<netty.version>4.0.23.Final</netty.version>
+		<bouncycastle.version>1.51</bouncycastle.version>
+		<littleproxy.version>${project.version}</littleproxy.version>
+		<junit.version>4.12</junit.version>
+		<hamcrest.version>2.0.0.0</hamcrest.version>
 	</properties>
 
 	<organization>
@@ -58,26 +64,51 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-junit</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-example</artifactId>
+			<version>${netty.version}</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>netty-tcnative</artifactId>
+					<groupId>io.netty</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.51</version>
+			<version>${bouncycastle.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcmail-jdk15on</artifactId>
-			<version>1.51</version>
+			<version>${bouncycastle.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.littleshoot</groupId>
 			<artifactId>littleproxy</artifactId>
-			<version>1.1.0-beta1-SNAPSHOT</version>
+			<version>${littleproxy.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -88,7 +119,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 	</dependencies>
 
 	<prerequisites>
-		<maven>2.2.1</maven>
+		<maven>3.0.4</maven>
 	</prerequisites>
 
 	<build>
@@ -96,7 +127,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.4.7</version>
+				<version>1.6.5</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>sonatype-nexus-staging</serverId>
@@ -121,7 +152,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.0</version>
+				<version>2.3</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
