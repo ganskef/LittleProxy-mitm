@@ -20,8 +20,10 @@ public class HostNameMitmManager implements MitmManager {
     public HostNameMitmManager(Authority authority)
             throws RootCertificateException {
         try {
-            sslEngineSource = new BouncyCastleSslEngineSource(authority, true,
-                    true);
+            boolean trustAllServers = false;
+            boolean sendCerts = true;
+            sslEngineSource = new BouncyCastleSslEngineSource(authority,
+                    trustAllServers, sendCerts);
         } catch (final Exception e) {
             throw new RootCertificateException(
                     "Errors during assembling root CA.", e);
