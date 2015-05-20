@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/ganskef/LittleProxy-parent.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-parent)
 
-LittleProxy-mitm is an extension for the [LittleProxy](https://github.com/adamfisk/LittleProxy) which enables Man-In-The-Middle for HTTPS. It provides for so all the filter capabilities of LittleProxy with HTTPS sites, too. See [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a detailed description of proxy interception processes. 
+LittleProxy-mitm is an extension for [LittleProxy](https://github.com/adamfisk/LittleProxy) which enables Man-In-The-Middle. It provides for so all the filter capabilities of LittleProxy with HTTPS sites, too. See [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a detailed description of proxy interception processes. 
 
 The first run creates the key store for your Certificate Authority. It's used to generate server certificates on the fly. The ```littleproxy-mitm.pem``` file have to be imported in your browser or within the systems certificates, Mozilla for example:
 
@@ -22,13 +22,13 @@ Once you've included LittleProxy-mitm, you can start the server with the followi
 HttpProxyServer server =
     DefaultHttpProxyServer.bootstrap()
         .withPort(8080) // for both HTTP and HTTPS
-        .withManInTheMiddle(new HostNameMitmManager());
+        .withManInTheMiddle(new HostNameMitmManager())
         .start();
 ```
 
 Please refer to the documentation of [LittleProxy](https://github.com/adamfisk/LittleProxy) to filter HTTP/S contents.
 
-#### Known Problems:
+###### Known Problems
 
  * Connection failure with some HTTPS sites like https://www.archlinux.org/ for example. You have to use [Java Cryptography Extension](http://en.wikipedia.org/wiki/Java_Cryptography_Extension) to fix it.
 ```
