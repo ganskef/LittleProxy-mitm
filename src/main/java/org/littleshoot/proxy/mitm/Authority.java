@@ -33,11 +33,13 @@ public class Authority {
         keyStoreDir = new File(".");
         alias = "littleproxy-mitm"; // proxy id
         password = "Be Your Own Lantern".toCharArray();
-        commonName = "Proxy description"; // MITM is bad normally
-        organization = "LittleProxy MITM"; // proxy name
+        organization = "LittleProxy-mitm"; // proxy name
+        commonName = organization + ", describe proxy here"; // MITM is bad
+                                                             // normally
         organizationalUnitName = "Certificate Authority";
         certOrganization = organization; // proxy name
-        certOrganizationalUnitName = "Proxy purpose";
+        certOrganizationalUnitName = organization
+                + ", describe proxy purpose here, since Man-In-The-Middle is bad normally.";
     }
 
     /**
