@@ -4,8 +4,8 @@ LittleProxy-mitm is an extension for the [LittleProxy](https://github.com/adamfi
 
 The first run creates the key store for your Certificate Authority. It's used to generate server certificates on the fly. The ```littleproxy-mitm.pem``` file have to be imported in your browser or within the systems certificates, Mozilla for example:
 
-![](https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-1.png "Import Certificate Mozilla 1")
-![](https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-2.png "Import Certificate Mozilla 2")
+<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-1.png" width="350">
+<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-2.png" width="350">
 
 Please set your browsers proxy settings to 9090. It's hard coded in the simple Launcher class. You may chose an other implementation, of course.
 
