@@ -48,7 +48,7 @@ Caused by: javax.net.ssl.SSLException: Received fatal alert: internal_error
     at sun.security.ssl.Alerts.getSSLException(Alerts.java:208)
 ...
 ```
- * The LittleProxy features mitm and proxy chaining are mutually exclusive. See the Netty Feature request: Client proxy support [#1133](https://github.com/netty/netty/issues/1133) for a possibly solution resolved in Netty 5.
+ * The LittleProxy features mitm and proxy chaining are mutually exclusive. See the issue [#1133](https://github.com/netty/netty/issues/1133) - Netty Feature request: Client proxy support - for a possibly solution resolved in Netty 5.
  * I'm not a natural English speaker/writer. So feel free to fix me if I'm wrong (or always in generally) and don't feel sad about a phrase.
 
 ----
