@@ -17,8 +17,8 @@ import org.junit.Test;
 
 import de.ganskef.test.Client;
 import de.ganskef.test.IClient;
-import de.ganskef.test.SecureServer;
 import de.ganskef.test.Server;
+import de.ganskef.test.TrustedServer;
 
 public class LittleProxyMitmTest {
 
@@ -38,7 +38,7 @@ public class LittleProxyMitmTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         server = new Server(9091).start();
-        secureServer = new SecureServer(9092).start();
+        secureServer = new TrustedServer(9092).start();
         proxy = new LittleProxyMitmProxy(9093).start();
     }
 

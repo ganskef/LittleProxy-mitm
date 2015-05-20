@@ -181,8 +181,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
             trustManagers = InsecureTrustManagerFactory.INSTANCE
                     .getTrustManagers();
         } else {
-            // Provide null to use the key store from Java.
-            trustManagers = CertificateHelper.getTrustManagers(null);
+            trustManagers = new TrustManager[] { new MergeTrustManager(ks) };
         }
 
         KeyManager[] keyManagers = null;
