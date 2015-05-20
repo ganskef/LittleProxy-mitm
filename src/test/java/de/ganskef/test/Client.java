@@ -56,31 +56,22 @@ public class Client implements IClient {
 
     private File callHttpsGet(URLConnection con)
             throws GeneralSecurityException, IOException {
-        // FileInputStream is = new FileInputStream(new File(
-        // "littleproxy-mitm.p12"));
-        // KeyStore ks = KeyStore.getInstance("PKCS12");
-        // ks.load(is, "Be Your Own Lantern".toCharArray());
-        // is.close();
-        //
-        // String tma = TrustManagerFactory.getDefaultAlgorithm();
-        // TrustManagerFactory tmf = TrustManagerFactory.getInstance(tma);
-        // tmf.init(ks);
-        // X509TrustManager defaultTrustManager = (X509TrustManager) tmf
-        // .getTrustManagers()[0];
-        //
-        // SSLContext context = SSLContext.getInstance("TLS");
-        // context.init(null, new TrustManager[] { defaultTrustManager }, null);
-
-        SSLContext context = SSLContext.getInstance("TLS");
-        TrustManager[] trustManagers = InsecureTrustManagerFactory.INSTANCE
-                .getTrustManagers();
-        context.init(null, trustManagers, null);
+        SSLContext context = initSslContext();
 
         SSLSocketFactory sslSocketFactory = context.getSocketFactory();
 
         ((HttpsURLConnection) con).setSSLSocketFactory(sslSocketFactory);
         con.connect();
         return read(con);
+    }
+
+    protected SSLContext initSslContext() throws GeneralSecurityException,
+            IOException {
+        SSLContext context = SSLContext.getInstance("TLS");
+        TrustManager[] trustManagers = InsecureTrustManagerFactory.INSTANCE
+                .getTrustManagers();
+        context.init(null, trustManagers, null);
+        return context;
     }
 
     private URLConnection createConnection(URL url, int proxyPort)
