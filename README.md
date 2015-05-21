@@ -40,17 +40,6 @@ Caused by: java.security.InvalidAlgorithmParameterException: Prime size must be 
     at com.sun.crypto.provider.DHKeyPairGenerator.initialize(DHKeyPairGenerator.java:120)
 ...
 ```
-
- * Connection failure with some HTTPS sites like https://netty.io/ or https://kitematic.com/ for example, with [Server Name Indication (SNI)](http://en.wikipedia.org/wiki/Server_Name_Indication) enabled. See the issues LittleProxy [#207](https://github.com/adamfisk/LittleProxy/issues/207) and Netty [#3801](https://github.com/netty/netty/issues/3801) for detailed informations.
-```
-18878  2015-05-16 21:12:22,757 WARN  [LittleProxy-ProxyToServerWorker-0] impl.ProxyToServerConnection (?:?).?() - (HANDSHAKING) [id: 0x5d8ce589, 0.0.0.0/0.0.0.0:46433 :> kitematic.com/104.28.2.49:443]: Caught exception on proxy -> web connection
-io.netty.handler.codec.DecoderException: javax.net.ssl.SSLException: Received fatal alert: internal_error
-    at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:280)
-...
-Caused by: javax.net.ssl.SSLException: Received fatal alert: internal_error
-    at sun.security.ssl.Alerts.getSSLException(Alerts.java:208)
-...
-```
  * The LittleProxy features mitm and proxy chaining are mutually exclusive. See the issue [#1133](https://github.com/netty/netty/issues/1133) - Netty Feature request: Client proxy support - for a possibly solution resolved in Netty 5.
  * I'm not a natural English speaker/writer. So feel free to fix me if I'm wrong (or always in generally) and don't feel sad about a phrase.
 
