@@ -1,5 +1,7 @@
 package org.littleshoot.proxy.mitm;
 
+import java.net.InetSocketAddress;
+
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSession;
 
@@ -30,8 +32,9 @@ public class HostNameMitmManager implements MitmManager {
         }
     }
 
-    public SSLEngine serverSslEngine() {
-        return sslEngineSource.newSslEngine();
+    public SSLEngine serverSslEngine(InetSocketAddress remoteAddress) {
+        return sslEngineSource.newSslEngine(remoteAddress.getHostName(),
+                remoteAddress.getPort());
     }
 
     public SSLEngine clientSslEngineFor(SSLSession serverSslSession,

@@ -1,5 +1,6 @@
 package org.littleshoot.proxy.mitm;
 
+import java.net.InetSocketAddress;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
@@ -38,8 +39,9 @@ public class CertificateSniffingMitmManager implements MitmManager {
         }
     }
 
-    public SSLEngine serverSslEngine() {
-        return sslEngineSource.newSslEngine();
+    public SSLEngine serverSslEngine(InetSocketAddress remoteAddress) {
+        return sslEngineSource.newSslEngine(remoteAddress.getHostName(),
+                remoteAddress.getPort());
     }
 
     public SSLEngine clientSslEngineFor(SSLSession serverSslSession,

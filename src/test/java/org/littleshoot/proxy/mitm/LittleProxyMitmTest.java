@@ -104,8 +104,7 @@ public class LittleProxyMitmTest {
         assertEquals("Offline response", FileUtils.readFileToString(proxied));
     }
 
-    // XXX test failed up to Netty 4.1.0.Beta5, see LittleProxy #207
-    // @Test
+    @Test
     public void testOnlineServerNameIndicationIssue207() throws Exception {
         String url = "https://netty.io/";
         File direct = null;
