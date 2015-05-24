@@ -85,12 +85,12 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 			<artifactId>netty-example</artifactId>
 			<version>${netty.version}</version>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>netty-tcnative</artifactId>
-					<groupId>io.netty</groupId>
-				</exclusion>
-			</exclusions>
+			<!-- If you have problems in Eclipse, copy the Maven plugin to eclipse/dropins/plugins/os-maven-plugin-1.2.3.Final.jar, 
+				restart Eclipse and update project with [alt]+[F5], see: https://github.com/trustin/os-maven-plugin#issues-with-eclipse-m2e-or-other-ides -->
+
+			<!--If this fails, you could exclude netty-tcnative: -->
+			<!-- <exclusions> <exclusion> <artifactId>netty-tcnative</artifactId> 
+				<groupId>io.netty</groupId> </exclusion> </exclusions> -->
 		</dependency>
 
 		<dependency>
