@@ -150,6 +150,18 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 			</plugin>
 
 			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.3</version>
@@ -196,6 +208,14 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 				<version>1.2.1</version>
 			</plugin>
 		</plugins>
+
+		<extensions>
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.2.3.Final</version>
+			</extension>
+		</extensions>
 	</build>
 
 	<reporting>
