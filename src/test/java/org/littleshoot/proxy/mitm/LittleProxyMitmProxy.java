@@ -23,37 +23,25 @@ import org.littleshoot.proxy.HttpFilters;
 import org.littleshoot.proxy.HttpFiltersAdapter;
 import org.littleshoot.proxy.HttpFiltersSource;
 import org.littleshoot.proxy.HttpFiltersSourceAdapter;
-import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ProxyUtils;
 
 import de.ganskef.test.IProxy;
+import de.ganskef.test.Server;
 
-public class LittleProxyMitmProxy implements IProxy {
-
-    private HttpProxyServer server;
-
-    private final int proxyPort;
+public class LittleProxyMitmProxy extends de.ganskef.test.Proxy implements
+        IProxy {
 
     private boolean connectionLimited;
 
     public LittleProxyMitmProxy(int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    @Override
-    public int getProxyPort() {
-        return proxyPort;
+        super(proxyPort);
     }
 
     @Override
     public LittleProxyMitmProxy start() {
-        if (server != null) {
-            server.stop();
-        }
-        server = bootstrap().start();
-        return this;
+        return (LittleProxyMitmProxy) super.start();
     }
 
     protected HttpProxyServerBootstrap bootstrap() {
@@ -125,7 +113,7 @@ public class LittleProxyMitmProxy implements IProxy {
             return DefaultHttpProxyServer
                     .bootstrap()
                     .withFiltersSource(filtersSource)
-                    .withPort(proxyPort)
+                    .withPort(getProxyPort())
                     .withServerResolver(serverResolver)
                     .withManInTheMiddle(
                             new HostNameMitmManager(new Authority()));
@@ -134,11 +122,6 @@ public class LittleProxyMitmProxy implements IProxy {
             throw new IllegalStateException(
                     "Could not enable Man-In-The-Middle", e);
         }
-    }
-
-    @Override
-    public void stop() {
-        server.stop();
     }
 
     public boolean isConnectionLimited() {
@@ -169,15 +152,8 @@ public class LittleProxyMitmProxy implements IProxy {
             DOMConfigurator.configureAndWatch(
                     log4jConfigurationFile.getAbsolutePath(), 15);
         }
-        try {
-
-            LittleProxyMitmProxy conn = new LittleProxyMitmProxy(9090).start();
-            conn.setConnectionLimited();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        new LittleProxyMitmProxy(9090).start();
+        Server.waitUntilInterupted();
     }
 
 }
