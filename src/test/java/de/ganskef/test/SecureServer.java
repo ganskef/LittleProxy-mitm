@@ -1,8 +1,11 @@
 package de.ganskef.test;
 
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+
+import java.io.File;
+
+import javax.net.ssl.SSLException;
 
 public class SecureServer extends Server {
 
@@ -12,8 +15,12 @@ public class SecureServer extends Server {
 
     public Server start() throws Exception {
         SelfSignedCertificate ssc = new SelfSignedCertificate("localhost");
-        SslContext sslCtx = SslContext.newServerContext(SslProvider.JDK,
-                ssc.certificate(), ssc.privateKey());
+        return initServerContext(ssc.certificate(), ssc.privateKey());
+    }
+
+    protected Server initServerContext(File certChainFile, File keyFile)
+            throws SSLException, InterruptedException {
+        SslContext sslCtx = SslContext.newServerContext(certChainFile, keyFile);
         return super.start(sslCtx);
     }
 

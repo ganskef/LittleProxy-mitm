@@ -9,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -21,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManager;
 
 import org.apache.commons.io.IOUtils;
@@ -146,7 +149,81 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
 
     @Override
     public SSLEngine newSslEngine(String remoteHost, int remotePort) {
-        return sslContext.createSSLEngine(remoteHost, remotePort);
+        SSLEngine sslEngine = sslContext
+                .createSSLEngine(remoteHost, remotePort);
+
+        // XXX It's hard to provide Host Name Verification with an SSLEngine in
+        // Java 6. It's implemented internally for java.net.HttpsURLConnection
+        // only. For Netty a SSLHandler has to be added as an SSL handshake
+        // listener alternatively. -> WIP
+        //
+        if (tryHostNameVerificationJava7(sslEngine)
+                || tryHostNameVerificationJava6(sslEngine)) {
+            return sslEngine;
+        }
+
+        // XXX consider to throw an Exception here, configurable eventually
+        //
+        LOG.error("Host Name Verification is not supported, causes insecure HTTPS connection");
+        return sslEngine;
+    }
+
+    private boolean tryHostNameVerificationJava6(SSLEngine sslEngine) {
+
+        // Very ugly internal access, but should work with Java 6 from Oracle,
+        // but won't work with my Java 6 from Apple and what's about Android?
+        //
+        if ("sun.security.ssl.SSLEngineImpl".equals(sslEngine.getClass()
+                .getName())) {
+            try {
+                Method method = sslEngine.getClass().getMethod(
+                        "tryHostNameVerification", String.class);
+                method.invoke(sslEngine, "HTTPS");
+                return true;
+            } catch (IllegalAccessException e) {
+                LOG.debug(
+                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
+                        e);
+            } catch (InvocationTargetException e) {
+                LOG.debug(
+                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
+                        e);
+            } catch (NoSuchMethodException e) {
+                LOG.debug(
+                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
+                        e);
+            } catch (SecurityException e) {
+                LOG.debug(
+                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
+                        e);
+            }
+        }
+        return false;
+    }
+
+    private boolean tryHostNameVerificationJava7(SSLEngine sslEngine) {
+        for (Method method : SSLParameters.class.getMethods()) {
+            // method is available since Java 7
+            if ("setEndpointIdentificationAlgorithm".equals(method.getName())) {
+                SSLParameters sslParams = new SSLParameters();
+                try {
+                    method.invoke(sslParams, "HTTPS");
+                } catch (IllegalAccessException e) {
+                    LOG.debug(
+                            "SSLParameters#setEndpointIdentificationAlgorithm",
+                            e);
+                    return false;
+                } catch (InvocationTargetException e) {
+                    LOG.debug(
+                            "SSLParameters#setEndpointIdentificationAlgorithm",
+                            e);
+                    return false;
+                }
+                sslEngine.setSSLParameters(sslParams);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void initializeKeyStore() throws RootCertificateException,
