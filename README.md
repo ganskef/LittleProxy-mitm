@@ -2,6 +2,8 @@
 
 LittleProxy-mitm is an extension for [LittleProxy](https://github.com/adamfisk/LittleProxy) which enables Man-In-The-Middle. It provides for so all the filter capabilities of LittleProxy with HTTPS sites, too. See [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a detailed description of proxy interception processes. 
 
+**Please use your browser directly for every security-critical transmission.** Mozilla Firefox and Google Chrome implements her own certificate handling for a reason. Handling security in Java like here must be less secure in most situations. See http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf "The Most Dangerous Code in the World: Validating SSL Certificates in Non-Browser Software".
+
 The first run creates the key store for your Certificate Authority. It's used to generate server certificates on the fly. The ```littleproxy-mitm.pem``` file have to be imported in your browser or within the systems certificates, Mozilla for example:
 
 <img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-1.png" height="210">
