@@ -21,7 +21,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 		<bouncycastle.version>1.51</bouncycastle.version>
 		<littleproxy.version>${project.version}</littleproxy.version>
 		<junit.version>4.12</junit.version>
-		<hamcrest.version>2.0.0.0</hamcrest.version>
+		<hamcrest.version>1.0.0.1</hamcrest.version>
 	</properties>
 
 	<organization>
@@ -66,24 +66,21 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
-<!-- 			<exclusions>
+			<exclusions>
 				<exclusion>
 					<groupId>org.hamcrest</groupId>
 					<artifactId>hamcrest-core</artifactId>
 				</exclusion>
 			</exclusions>
--->
- 		</dependency>
+		</dependency>
 
-<!-- 
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-junit</artifactId>
 			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
- -->
- 		<dependency>
+		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-example</artifactId>
 			<version>${netty.version}</version>
@@ -92,8 +89,8 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 				restart Eclipse and update project with [alt]+[F5], see: https://github.com/trustin/os-maven-plugin#issues-with-eclipse-m2e-or-other-ides -->
 
 			<!--If this fails, you could exclude netty-tcnative: -->
-			<!-- --> <exclusions> <exclusion> <artifactId>netty-tcnative</artifactId> 
-				<groupId>io.netty</groupId> </exclusion> </exclusions> <!-- -->
+			<!-- - -> <exclusions> <exclusion> <artifactId>netty-tcnative</artifactId> 
+				<groupId>io.netty</groupId> </exclusion> </exclusions> <!- - -->
 		</dependency>
 
 		<dependency>
