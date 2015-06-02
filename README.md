@@ -1,6 +1,6 @@
 ### Issue: Netty client via proxy fails with LittleProxy if MITM enabled
 
-I've build a lot of Netty based clients for testing MITM and I have noticed a difficult, a little volatile problem. This issue is relevant for the client part of LittleProxy also, to support MITM with Chained Proxy adamfisk/LittleProxy#202, adamfisk/LittleProxy#87 and Multiple Chained Proxies adamfisk/LittleProxy#195.
+I've build a lot of Netty based clients for testing MITM and I have noticed a difficult, a little volatile problem. This issue is relevant for the client part of LittleProxy also, to support MITM with Chained Proxy https://github.com/adamfisk/LittleProxy#202, https://github.com/adamfisk/LittleProxy#87 and Multiple Chained Proxies https://github.com/adamfisk/LittleProxy#195.
 
 A simple Netty based client works for me with connecting the proxy address and retrieving a http request with the address of the upstream server. This fails with an https URL in connect with a SSL error (ok).
 
