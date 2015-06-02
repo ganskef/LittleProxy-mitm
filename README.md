@@ -1,3 +1,21 @@
+### Issue: Netty client via proxy fails with LittleProxy if MITM enabled
+
+I've build a lot of Netty based clients for testing MITM and I have noticed a difficult, a little volatile problem. This issue is relevant for the client part of LittleProxy also, to support MITM with Chained Proxy adamfisk/LittleProxy#202, adamfisk/LittleProxy#87 and Multiple Chained Proxies adamfisk/LittleProxy#195.
+
+A simple Netty based client works for me with connecting the proxy address and retrieving a http request with the address of the upstream server. This fails with an https URL in connect with a SSL error (ok).
+
+Nettys feature request: Client proxy support netty/netty#1133 pronounces a solution for it. It's available in Netty 5 and 4.1.0.Beta5, but the milestone is modified to 4.1.0.Beta6. I've tested the same behavior with Netty 4.1 and 5 against LittleProxy in a separate process:
+
+ * My Netty based clients on top of the new module netty-handler-proxy fails with LittleProxy with MITM enabled. It fails with https and http, too.
+
+ * It works with LittleProxy without MITM with http and https tunneled. It works with an other tunneled proxy (GlimmerBlocker). It works with an other MITM enabled proxy (WWWOFFLE).
+
+ * But, the failure is not happens with an URLConnection based client with https and http or with any browser I've tried. 
+
+Based on the working situations, I suppose a problem within LittleProxy.
+
+**I would be very glad to see any suggestions.**
+---
 [![Build Status](https://travis-ci.org/ganskef/LittleProxy-parent.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-parent)
 
 LittleProxy-mitm is an extension for [LittleProxy](https://github.com/adamfisk/LittleProxy) which enables Man-In-The-Middle. It provides for so all the filter capabilities of LittleProxy with HTTPS sites, too. See [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a detailed description of proxy interception processes. 
