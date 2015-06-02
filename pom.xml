@@ -17,7 +17,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 		<github.global.server>github</github.global.server>
 		<skipTests>false</skipTests>
 		<!-- Versions should better be retrieved from a parent module. -->
-		<netty.version>4.0.23.Final</netty.version>
+		<netty.version>4.1.0.Beta5</netty.version>
 		<bouncycastle.version>1.51</bouncycastle.version>
 		<littleproxy.version>${project.version}</littleproxy.version>
 		<junit.version>4.12</junit.version>
