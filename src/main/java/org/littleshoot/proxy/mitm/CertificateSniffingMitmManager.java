@@ -13,20 +13,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link MitmManager} that tries to find the common name and subject
- * alternative names from the upstream certificate to create a dynamic
- * certificate with it.
- * 
- * @deprecated There is a problem with long subject alternate name lists in the
- *             upstream certificate. See the comments.
+ * {@link MitmManager} that uses the common name and subject alternative names
+ * from the upstream certificate to create a dynamic certificate with it.
  */
-@Deprecated
 public class CertificateSniffingMitmManager implements MitmManager {
 
     private static final Logger LOG = LoggerFactory
             .getLogger(CertificateSniffingMitmManager.class);
 
     private BouncyCastleSslEngineSource sslEngineSource;
+
+    public CertificateSniffingMitmManager() throws RootCertificateException {
+        this(new Authority());
+    }
 
     public CertificateSniffingMitmManager(Authority authority)
             throws RootCertificateException {
@@ -49,27 +48,18 @@ public class CertificateSniffingMitmManager implements MitmManager {
         try {
             X509Certificate upstreamCert = getCertificateFromSession(serverSslSession);
             // TODO store the upstream cert by commonName to review it later
-            String commonName = getCommonName(upstreamCert);
 
-            // Two reasons to not use the common name and the alternative names
+            // A reasons to not use the common name and the alternative names
             // from upstream certificate from serverSslSession to create the
             // dynamic certificate:
             //
-            // 1. It's not necessary. The host name is accepted by the browser.
+            // It's not necessary. The host name is accepted by the browser.
             //
-            // 2. Googles developer.chrome.com certificate (for example) lists
-            // more subject alternate names in the browser, than returned by
-            // getSubjectAlternativeNames(). Therefore the fake certificate was
-            // rejected. A Bug?
-            //
-            String serverName = serverHostAndPort.split(":")[0];
+            String commonName = getCommonName(upstreamCert);
+
             SubjectAlternativeNameHolder san = new SubjectAlternativeNameHolder();
 
-            // This is an ugly trick to add the host name to the truncated list.
-            // I's obsolete and names could be duplicated in this way.
-            //
             san.addAll(upstreamCert.getSubjectAlternativeNames());
-            san.addDomainName(serverName);
 
             LOG.debug("Subject Alternative Names: {}", san);
             return sslEngineSource.createCertForHost(commonName, san);

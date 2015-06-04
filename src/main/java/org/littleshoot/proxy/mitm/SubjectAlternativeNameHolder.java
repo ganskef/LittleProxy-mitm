@@ -3,6 +3,8 @@ package org.littleshoot.proxy.mitm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERSequence;
@@ -12,6 +14,9 @@ import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 
 public class SubjectAlternativeNameHolder {
+
+    private static final Pattern TAGS_PATTERN = Pattern.compile("["
+            + GeneralName.iPAddress + GeneralName.dNSName + "]");
 
     private final List<ASN1Encodable> sans = new ArrayList<ASN1Encodable>();
 
@@ -33,10 +38,22 @@ public class SubjectAlternativeNameHolder {
         }
     }
 
-    @Deprecated
     public void addAll(Collection<List<?>> subjectAlternativeNames) {
-        // FIXME or remove it
-        throw new UnsupportedOperationException();
+        for (List<?> each : subjectAlternativeNames) {
+            sans.add(parseGeneralName(each));
+        }
     }
 
+    private ASN1Encodable parseGeneralName(List<?> nameEntry) {
+        if (nameEntry != null && nameEntry.size() != 2) {
+            throw new IllegalArgumentException(String.valueOf(nameEntry));
+        }
+        String tag = String.valueOf(nameEntry.get(0));
+        Matcher m = TAGS_PATTERN.matcher(tag);
+        if (m.matches()) {
+            return new GeneralName(Integer.valueOf(tag),
+                    String.valueOf(nameEntry.get(1)));
+        }
+        throw new IllegalArgumentException(String.valueOf(nameEntry));
+    }
 }
