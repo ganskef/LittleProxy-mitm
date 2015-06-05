@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.net.HostAndPort;
 
 /**
  * A {@link SslEngineSource} which creates a key store with a Root Certificate
@@ -148,10 +149,20 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
     }
 
     @Override
-    public SSLEngine newSslEngine(String remoteHost, int remotePort) {
-        SSLEngine sslEngine = sslContext
-                .createSSLEngine(remoteHost, remotePort);
-
+    public SSLEngine newSslEngine(String serverHostAndPort) {
+        SSLEngine sslEngine;
+        try {
+            HostAndPort parsed = HostAndPort.fromString(serverHostAndPort);
+            String peerHost = parsed.getHostText();
+            int peerPort = parsed.getPort();
+            sslEngine = sslContext.createSSLEngine(peerHost, peerPort);
+        } catch (IllegalStateException e) {
+            LOG.warn("Invalid port number in " + serverHostAndPort, e);
+            return sslContext.createSSLEngine();
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Wrong host and port format in " + serverHostAndPort, e);
+            return sslContext.createSSLEngine();
+        }
         // XXX It's hard to provide Host Name Verification with an SSLEngine in
         // Java 6. It's implemented internally for java.net.HttpsURLConnection
         // only. For Netty a SSLHandler has to be added as an SSL handshake

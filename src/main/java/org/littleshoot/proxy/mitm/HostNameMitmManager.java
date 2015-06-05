@@ -30,8 +30,8 @@ public class HostNameMitmManager implements MitmManager {
         }
     }
 
-    public SSLEngine serverSslEngine(String peerHost, int peerPort) {
-        return sslEngineSource.newSslEngine(peerHost, peerPort);
+    public SSLEngine serverSslEngine(String serverHostAndPort) {
+        return sslEngineSource.newSslEngine(serverHostAndPort);
     }
 
     public SSLEngine clientSslEngineFor(SSLSession serverSslSession,
