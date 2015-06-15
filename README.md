@@ -46,6 +46,10 @@ HttpProxyServer server =
         .start();
 ```
 
+Alternatively you can use ```CertificateSniffingMitmManager``` which copies the Common Name and Subject Alternative Names from the upstream certificate.
+
+Please give an ```Authority``` in the constructor to personalize your application. You impersonate certificates which is normally a bad thing. You have to describe the reason for.
+
 Please refer to the documentation of [LittleProxy](https://github.com/adamfisk/LittleProxy) to filter HTTP/S contents.
 
 ###### Known Problems
