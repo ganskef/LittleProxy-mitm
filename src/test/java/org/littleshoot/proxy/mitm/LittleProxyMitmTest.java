@@ -106,7 +106,11 @@ public class LittleProxyMitmTest {
 
     @Test
     public void testOnlineServerNameIndicationIssue207() throws Exception {
-        String url = "https://netty.io/";
+
+        // https://netty.io site fails with 522 today 7/11/2015
+        // String url = "https://netty.io/";
+
+        String url = "https://kitematic.com/";
         File direct = null;
         try {
             direct = newClient().get(url);
