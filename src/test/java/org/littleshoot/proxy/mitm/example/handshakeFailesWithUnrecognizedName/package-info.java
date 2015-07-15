@@ -23,6 +23,10 @@
  * 
  * <p><a href="https://github.com/netty/netty/issues/591">https://github.com/netty/netty/issues/591</a>
  * Could I reuse a bootstrap to reconnect?
+ * 
+ * <p><a href="https://github.com/grpc/grpc-java/blob/8f537e3ec6be1df01ea98f8f2e53eb233c3eb9b6/netty/src/main/java/io/grpc/transport/netty/Http2Negotiator.java#L123">https://github.com/grpc/grpc-java/blob/8f537e3ec6be1df01ea98f8f2e53eb233c3eb9b6/netty/src/main/java/io/grpc/transport/netty/Http2Negotiator.java#L123</a>
+ * If I understand right, this code replace the sslHandler in the pipeline (in 
+ * case of a handshake failure?).
  */
 package org.littleshoot.proxy.mitm.example.handshakeFailesWithUnrecognizedName;
 
