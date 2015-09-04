@@ -4,7 +4,7 @@
 	<groupId>org.littleshoot</groupId>
 	<artifactId>littleproxy-mitm</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.0-beta1-SNAPSHOT</version>
+	<version>1.1.0-beta2-SNAPSHOT</version>
 	<name>LittleProxy - Man-In-The-Middle</name>
 	<description>LittleProxy is a high performance HTTP proxy written in Java and using the Netty networking framework.
 
@@ -92,6 +92,28 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 			<!-- - -> <exclusions> <exclusion> <artifactId>netty-tcnative</artifactId> 
 				<groupId>io.netty</groupId> </exclusion> </exclusions> <!- - -->
 		</dependency>
+
+		<!-- LittleProxy tests - ->
+		<dependency>
+			<groupId>org.littleshoot</groupId>
+			<artifactId>littleproxy</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>8.1.1.v20120215</version>
+			<scope>test</scope>
+		</dependency>
+		<!- - -->
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
