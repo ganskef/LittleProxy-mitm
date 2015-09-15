@@ -54,8 +54,12 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CertificateHelper {
+
+    private static final Logger log = LoggerFactory.getLogger(CertificateHelper.class);
 
     public static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 
@@ -90,7 +94,24 @@ public final class CertificateHelper {
     private static final Date NOT_AFTER = new Date(
             System.currentTimeMillis() + 86400000L * 365 * 100);
 
-    private static final String SSL_CONTEXT_PROTOCOL = "TLS";
+    /**
+     * Enforce TLS 1.2 if available, since it's not default up to Java 8.
+     * <p>
+     * Java 7 disables TLS 1.1 and 1.2 for clients. From <a href=
+     * "http://docs.oracle.com/javase/7/docs/technotes/guides/security/SunProviders.html"
+     * >Java Cryptography Architecture Oracle Providers Documentation:</a>
+     * Although SunJSSE in the Java SE 7 release supports TLS 1.1 and TLS 1.2,
+     * neither version is enabled by default for client connections. Some
+     * servers do not implement forward compatibility correctly and refuse to
+     * talk to TLS 1.1 or TLS 1.2 clients. For interoperability, SunJSSE does
+     * not enable TLS 1.1 or TLS 1.2 by default for client connections.
+     */
+    private static final String SSL_CONTEXT_PROTOCOL = "TLSv1.2";
+    /**
+     * {@link SSLContext}: Every implementation of the Java platform is required
+     * to support the following standard SSLContext protocol: TLSv1
+     */
+    private static final String SSL_CONTEXT_FALLBACK_PROTOCOL = "TLSv1";
 
     public static KeyPair generateKeyPair(int keySize)
             throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -243,8 +264,7 @@ public final class CertificateHelper {
     public static SSLContext newClientContext(KeyManager[] keyManagers,
             TrustManager[] trustManagers) throws NoSuchAlgorithmException,
             KeyManagementException, NoSuchProviderException {
-        SSLContext result = SSLContext.getInstance(SSL_CONTEXT_PROTOCOL
-        /* , PROVIDER_NAME */);
+        SSLContext result = newSSLContext();
         result.init(keyManagers, trustManagers, null);
         return result;
     }
@@ -252,12 +272,24 @@ public final class CertificateHelper {
     public static SSLContext newServerContext(KeyManager[] keyManagers)
             throws NoSuchAlgorithmException, NoSuchProviderException,
             KeyManagementException {
-        SSLContext result = SSLContext.getInstance(SSL_CONTEXT_PROTOCOL
-        /* ,PROVIDER_NAME */);
+        SSLContext result = newSSLContext();
         SecureRandom random = new SecureRandom();
         random.setSeed(System.currentTimeMillis());
         result.init(keyManagers, null, random);
         return result;
+    }
+
+    private static SSLContext newSSLContext() throws NoSuchAlgorithmException {
+        try {
+            log.debug("Using protocol {}", SSL_CONTEXT_PROTOCOL);
+            return SSLContext.getInstance(SSL_CONTEXT_PROTOCOL
+            /* , PROVIDER_NAME */);
+        } catch (NoSuchAlgorithmException e) {
+            log.warn("Protocol {} not available, falling back to {}", SSL_CONTEXT_PROTOCOL,
+                    SSL_CONTEXT_FALLBACK_PROTOCOL);
+            return SSLContext.getInstance(SSL_CONTEXT_FALLBACK_PROTOCOL
+            /* , PROVIDER_NAME */);
+        }
     }
 
     public static long initRandomSerial() {
