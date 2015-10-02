@@ -1,312 +1,327 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.littleshoot</groupId>
-	<artifactId>littleproxy-mitm</artifactId>
-	<packaging>jar</packaging>
-	<version>1.1.0-beta1-SNAPSHOT</version>
-	<name>LittleProxy - Man-In-The-Middle</name>
-	<description>LittleProxy is a high performance HTTP proxy written in Java and using the Netty networking framework.
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.littleshoot</groupId>
+    <artifactId>littleproxy-mitm</artifactId>
+    <packaging>jar</packaging>
+    <version>1.1.0-beta1-SNAPSHOT</version>
+    <name>LittleProxy - Man-In-The-Middle</name>
+    <description>LittleProxy is a high performance HTTP proxy written in Java and using the Netty networking framework.
 
 This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.</description>
-	<url>http://littleproxy.org</url>
+    <url>http://littleproxy.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<github.global.server>github</github.global.server>
-		<skipTests>false</skipTests>
-		<!-- Versions should better be retrieved from a parent module. -->
-		<netty.version>4.0.23.Final</netty.version>
-		<bouncycastle.version>1.51</bouncycastle.version>
-		<littleproxy.version>${project.version}</littleproxy.version>
-		<junit.version>4.12</junit.version>
-		<hamcrest.version>1.0.0.1</hamcrest.version>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <github.global.server>github</github.global.server>
+        <skipTests>false</skipTests>
+        <!-- Versions should better be retrieved from a parent module. -->
+        <netty.version>4.0.23.Final</netty.version>
+        <bouncycastle.version>1.51</bouncycastle.version>
+        <littleproxy.version>${project.version}</littleproxy.version>
+        <junit.version>4.12</junit.version>
+        <hamcrest.version>1.0.0.1</hamcrest.version>
+    </properties>
 
-	<organization>
-		<name>LittleShoot</name>
-		<url>http://littleproxy.org</url>
-	</organization>
+    <organization>
+        <name>LittleShoot</name>
+        <url>http://littleproxy.org</url>
+    </organization>
 
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
 
-	<mailingLists>
-		<mailingList>
-			<archive>http://groups.google.com/group/littleproxy</archive>
-			<name>littleproxy</name>
-			<post>littleproxy@googlegroups.com</post>
-			<subscribe>http://groups.google.com/group/littleproxy</subscribe>
-			<unsubscribe>littleproxy+unsubscribe@googlegroups.com</unsubscribe>
-		</mailingList>
-	</mailingLists>
+    <mailingLists>
+        <mailingList>
+            <archive>http://groups.google.com/group/littleproxy</archive>
+            <name>littleproxy</name>
+            <post>littleproxy@googlegroups.com</post>
+            <subscribe>http://groups.google.com/group/littleproxy</subscribe>
+            <unsubscribe>littleproxy+unsubscribe@googlegroups.com</unsubscribe>
+        </mailingList>
+    </mailingLists>
 
-	<issueManagement>
-		<system>github</system>
-		<url>https://github.com/ganskef/LittleProxy-mitm/issues</url>
-	</issueManagement>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/ganskef/LittleProxy-mitm/issues</url>
+    </issueManagement>
 
-	<scm>
-		<connection>scm:git:https://ganskef@github.com/ganskef/LittleProxy-mitm.git</connection>
-		<developerConnection>scm:git:git@github.com:ganskef/LittleProxy-mitm</developerConnection>
-		<url>scm:git:git@github.com:ganskef/LittleProxy-mitm.git</url>
-	</scm>
+    <scm>
+        <connection>scm:git:https://ganskef@github.com/ganskef/LittleProxy-mitm.git</connection>
+        <developerConnection>scm:git:git@github.com:ganskef/LittleProxy-mitm</developerConnection>
+        <url>scm:git:git@github.com:ganskef/LittleProxy-mitm.git</url>
+    </scm>
 
-	<inceptionYear>2015</inceptionYear>
+    <inceptionYear>2015</inceptionYear>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hamcrest</groupId>
-					<artifactId>hamcrest-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-junit</artifactId>
-			<version>${hamcrest.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-example</artifactId>
-			<version>${netty.version}</version>
-			<scope>test</scope>
-			<!-- If you have problems in Eclipse, copy the Maven plugin to eclipse/dropins/plugins/os-maven-plugin-1.2.3.Final.jar, 
-				restart Eclipse and update project with [alt]+[F5], see: https://github.com/trustin/os-maven-plugin#issues-with-eclipse-m2e-or-other-ides -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-junit</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-example</artifactId>
+            <version>${netty.version}</version>
+            <scope>test</scope>
+            <!-- If you have problems in Eclipse, copy the Maven plugin to
+                eclipse/dropins/plugins/os-maven-plugin-1.2.3.Final.jar,
+                restart Eclipse and update project with [alt]+[F5], see:
+                https://github.com/trustin/os-maven-plugin#issues-with-eclipse-m2e-or-other-ides
+            -->
 
-			<!--If this fails, you could exclude netty-tcnative: -->
-			<!-- - -> <exclusions> <exclusion> <artifactId>netty-tcnative</artifactId> 
-				<groupId>io.netty</groupId> </exclusion> </exclusions> <!- - -->
-		</dependency>
+            <!--If this fails, you could exclude netty-tcnative: -->
+            <!-- - ->
+                <exclusions>
+                <exclusion>
+                <artifactId>netty-tcnative</artifactId>
+                <groupId>io.netty</groupId>
+                </exclusion>
+                </exclusions>
+                <!- - -->
+        </dependency>
 
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<version>${bouncycastle.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcmail-jdk15on</artifactId>
-			<version>${bouncycastle.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.littleshoot</groupId>
-			<artifactId>littleproxy</artifactId>
-			<version>${littleproxy.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.10</version>
-		</dependency>
+        <dependency>
+            <groupId>org.littleshoot</groupId>
+            <artifactId>littleproxy</artifactId>
+            <version>${littleproxy.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.10</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
-	<prerequisites>
-		<maven>3.0.4</maven>
-	</prerequisites>
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.5</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>sonatype-nexus-staging</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-				</configuration>
-			</plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.5</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>sonatype-nexus-staging</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>UTF-8</encoding>
-					<!-- The following force compilation with full warnings. -->
-					<!-- <fork>true</fork> <showWarnings>true</showWarnings> <showDeprecation>true</showDeprecation> 
-						<compilerArguments><Xlint /></compilerArguments> -->
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                    <!-- The following force compilation with full warnings. -->
+                    <!--
+                        <fork>true</fork>
+                        <showWarnings>true</showWarnings>
+                        <showDeprecation>true</showDeprecation>
+                        <compilerArguments>
+                        <Xlint />
+                        </compilerArguments>
+                    -->
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>shade</shadedClassifierName>
-							<artifactSet>
-							</artifactSet>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>shade</shadedClassifierName>
+                            <artifactSet>
+                            </artifactSet>
 
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
 
-							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<manifestEntries>
-										<Main-Class>org.littleshoot.proxy.mitm.Launcher</Main-Class>
-										<Class-Path>.</Class-Path>
-									</manifestEntries>
-								</transformer>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>org.littleshoot.proxy.mitm.Launcher</Main-Class>
+                                        <Class-Path>.</Class-Path>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+            </plugin>
+        </plugins>
 
-		<extensions>
-			<extension>
-				<groupId>kr.motd.maven</groupId>
-				<artifactId>os-maven-plugin</artifactId>
-				<version>1.2.3.Final</version>
-			</extension>
-		</extensions>
-	</build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.2.3.Final</version>
+            </extension>
+        </extensions>
+    </build>
 
-	<reporting>
-		<plugins>
+    <reporting>
+        <plugins>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.5.2</version>
-			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.2</version>
+            </plugin>
 
-			<!-- Standard maven site report -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.6</version>
-			</plugin>
+            <!-- Standard maven site report -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
 
-			<!-- Style report -->
-			<!-- <plugin> error - heap space problem <groupId>org.apache.maven.plugins</groupId> 
-				<artifactId>maven-checkstyle-plugin</artifactId> </plugin> -->
+            <!-- Style report -->
+            <!-- <plugin> error - heap space problem <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId> </plugin> -->
 
-			<!-- Report code metrics using JDepend. -->
-			<!-- <plugin> error - could not download <groupId>org.codehaus.mojo</groupId> 
-				<artifactId>jdepend-maven-plugin</artifactId> <version>2.0-beta-1-SNAPSHOT</version> 
-				</plugin> -->
+            <!-- Report code metrics using JDepend. -->
+            <!-- <plugin> error - could not download <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId> <version>2.0-beta-1-SNAPSHOT</version>
+                </plugin> -->
 
-			<!-- Tag Report -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>taglist-maven-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<multipleLineComments>true</multipleLineComments>
-					<tags>
-						<tag>mudo</tag>
-						<tag>todo</tag>
-						<tag>idea</tag>
-						<tag>MUDO</tag>
-						<tag>TODO</tag>
-						<tag>IDEA</tag>
-					</tags>
-				</configuration>
-			</plugin>
+            <!-- Tag Report -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <multipleLineComments>true</multipleLineComments>
+                    <tags>
+                        <tag>mudo</tag>
+                        <tag>todo</tag>
+                        <tag>idea</tag>
+                        <tag>MUDO</tag>
+                        <tag>TODO</tag>
+                        <tag>IDEA</tag>
+                    </tags>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.16</version>
-				<configuration>
-					<showSuccess>false</showSuccess>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <showSuccess>false</showSuccess>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<version>2.8</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>github-report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.8</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>github-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
-				<configuration>
-					<show>private</show>
-					<source>1.6</source>
-					<links>
-						<link>http://netty.io/4.0/api/</link>
-					</links>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <show>private</show>
+                    <source>1.6</source>
+                    <links>
+                        <link>http://netty.io/4.0/api/</link>
+                    </links>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jxr-maven-plugin</artifactId>
-				<version>2.3</version>
-			</plugin>
-		</plugins>
-	</reporting>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jxr-maven-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
-	<developers>
-	</developers>
+    <developers>
+    </developers>
 
-	<repositories>
-	</repositories>
+    <repositories>
+    </repositories>
 </project>
