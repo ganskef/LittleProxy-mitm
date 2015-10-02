@@ -4,7 +4,7 @@
     <groupId>org.littleshoot</groupId>
     <artifactId>littleproxy-mitm</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.0-beta1-SNAPSHOT</version>
+    <version>1.1.0-beta2-SNAPSHOT</version>
     <name>LittleProxy - Man-In-The-Middle</name>
     <description>LittleProxy is a high performance HTTP proxy written in Java and using the Netty networking framework.
 
@@ -107,10 +107,9 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
             <artifactId>bcprov-jdk15on</artifactId>
             <version>${bouncycastle.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcmail-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bouncycastle.version}</version>
         </dependency>
 
