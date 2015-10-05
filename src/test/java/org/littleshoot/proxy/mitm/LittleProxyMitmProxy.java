@@ -24,6 +24,7 @@ import org.littleshoot.proxy.HttpFiltersAdapter;
 import org.littleshoot.proxy.HttpFiltersSource;
 import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
+import org.littleshoot.proxy.MitmManager;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ProxyUtils;
 
@@ -35,8 +36,15 @@ public class LittleProxyMitmProxy extends de.ganskef.test.Proxy implements
 
     private boolean connectionLimited;
 
-    public LittleProxyMitmProxy(int proxyPort) {
+    private final MitmManager mitmManager;
+
+    public LittleProxyMitmProxy(int proxyPort) throws RootCertificateException {
+        this(proxyPort, new HostNameMitmManager());
+    }
+
+    public LittleProxyMitmProxy(int proxyPort, MitmManager mitmManager) {
         super(proxyPort);
+        this.mitmManager = mitmManager;
     }
 
     @Override
@@ -109,19 +117,13 @@ public class LittleProxyMitmProxy extends de.ganskef.test.Proxy implements
             }
         };
 
-        try {
-            return DefaultHttpProxyServer
-                    .bootstrap()
-                    .withFiltersSource(filtersSource)
-                    .withPort(getProxyPort())
-                    .withServerResolver(serverResolver)
-                    .withManInTheMiddle(
-                            new HostNameMitmManager(new Authority()));
+        return DefaultHttpProxyServer
+                .bootstrap()
+                .withFiltersSource(filtersSource)
+                .withPort(getProxyPort())
+                .withServerResolver(serverResolver)
+                .withManInTheMiddle(mitmManager);
 
-        } catch (RootCertificateException e) {
-            throw new IllegalStateException(
-                    "Could not enable Man-In-The-Middle", e);
-        }
     }
 
     public boolean isConnectionLimited() {
@@ -146,7 +148,7 @@ public class LittleProxyMitmProxy extends de.ganskef.test.Proxy implements
         return response;
     }
 
-    public static void main(final String... args) {
+    public static void main(final String... args) throws Exception {
         File log4jConfigurationFile = new File("src/test/resources/log4j.xml");
         if (log4jConfigurationFile.exists()) {
             DOMConfigurator.configureAndWatch(

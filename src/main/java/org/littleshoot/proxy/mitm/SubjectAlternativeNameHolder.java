@@ -39,8 +39,10 @@ public class SubjectAlternativeNameHolder {
     }
 
     public void addAll(Collection<List<?>> subjectAlternativeNames) {
-        for (List<?> each : subjectAlternativeNames) {
-            sans.add(parseGeneralName(each));
+        if (subjectAlternativeNames != null) {
+            for (List<?> each : subjectAlternativeNames) {
+                sans.add(parseGeneralName(each));
+            }
         }
     }
 
