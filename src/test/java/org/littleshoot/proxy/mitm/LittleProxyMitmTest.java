@@ -24,7 +24,7 @@ public class LittleProxyMitmTest {
 
     private static final String IMAGE_PATH = "src/test/resources/www/netty-in-action.gif";
 
-    private static LittleProxyMitmProxy proxy;
+    protected static LittleProxyMitmProxy proxy;
     private static Server server;
     private static Server secureServer;
 
@@ -39,6 +39,10 @@ public class LittleProxyMitmTest {
     public static void beforeClass() throws Exception {
         server = new Server(9091).start();
         secureServer = new TrustedServer(9092).start();
+    }
+
+    @BeforeClass
+    public static void initProxy() throws Exception {
         proxy = new LittleProxyMitmProxy(9093).start();
     }
 

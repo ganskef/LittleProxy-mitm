@@ -40,7 +40,7 @@ public class Proxy implements IProxy {
         proxy.stop();
     }
 
-    public static void main(final String... args) {
+    public static void main(final String... args) throws Exception{
         File log4jConfigurationFile = new File("src/test/resources/log4j.xml");
         if (log4jConfigurationFile.exists()) {
             DOMConfigurator.configureAndWatch(
