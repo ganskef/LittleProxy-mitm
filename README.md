@@ -98,8 +98,10 @@ like this in your `FiltersSource` implementation:
 `ssl_error_weak_server_ephemeral_dh_key`. A workaround found in the Web is to
 open `about:config`, search for `ssl3` and disable the first two entries 
 containing `dhe_rsa`:
+
 <img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android.png" width="300">
 <img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android-fix.png" width="300">
+
  * Connection failure with some HTTPS sites like https://www.archlinux.org/ for example. You have to use [Java Cryptography Extension](http://en.wikipedia.org/wiki/Java_Cryptography_Extension) to fix it.
 ```
 387481 2015-05-19 21:34:39,061 WARN  [LittleProxy-ProxyToServerWorker-6] impl.ProxyToServerConnection - (HANDSHAKING) [id: 0x7e0de7f2, /192.168.178.30:1475 => www.archlinux.org/66.211.214.131:443]: Caught exception on proxy -> web connection
