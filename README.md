@@ -99,8 +99,8 @@ like this in your `FiltersSource` implementation:
 open `about:config`, search for `ssl3` and disable the first two entries 
 containing `dhe_rsa`:
 
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android.png" width="300">
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android-fix.png" width="300">
+<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android.png" width="350">
+<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android-fix.png" width="350">
 
  * Connection failure with some HTTPS sites like https://www.archlinux.org/ for example. You have to use [Java Cryptography Extension](http://en.wikipedia.org/wiki/Java_Cryptography_Extension) to fix it.
 ```
