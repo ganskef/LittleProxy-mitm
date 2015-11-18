@@ -91,13 +91,13 @@ like this in your `FiltersSource` implementation:
  * Following requests on this channel have to concatenate the saved 
  `connected_url` with the URI from the `originalRequest`.
 
-###### Known Problems
+###### Workarounds for Known Problems
 
  * Using Mozilla Firefox (> 39) with the proxy running on Android (Version 
-4.4.4) I've seen a general SSL connection failure with error code
-`ssl_error_weak_server_ephemeral_dh_key`. A workaround found in the Web is to
-open `about:config`, search for `ssl3` and disable the first two entries 
-containing `dhe_rsa`:
+4.4.4) I've seen a general SSL connection failure with error code 
+`ssl_error_weak_server_ephemeral_dh_key`. (I've never seen it in a desktop 
+environment.) A workaround found in the Web is to open `about:config`, search 
+for `ssl3` and disable the first two entries containing `dhe_rsa`:
 
 <img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android.png" width="350">
 <img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android-fix.png" width="350">
