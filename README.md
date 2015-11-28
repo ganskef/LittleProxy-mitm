@@ -7,13 +7,6 @@ with HTTPS sites, too. See
 [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a 
 detailed description of proxy interception processes. 
 
-**Please use your browser directly for every security-critical transmission.** 
-Mozilla Firefox and Google Chrome implements her own certificate handling for a 
-reason. Handling security in Java like here must be less secure in most 
-situations. See http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf "The Most 
-Dangerous Code in the World: Validating SSL Certificates in Non-Browser 
-Software".
-
 The first run creates the key store for your Certificate Authority. It's used to 
 generate server certificates on the fly. The ```littleproxy-mitm.pem``` file 
 have to be imported in your browser or within the systems certificates, Mozilla 
@@ -22,9 +15,15 @@ for example:
 <img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-1.png" height="210">
 <img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-2.png" height="210">
 
-Please set your browsers proxy settings to 9090. It's hard coded in the simple 
-Launcher class. You may chose an other implementation, of course.
+You have to set your browsers proxy settings to 9090. It's hard coded in the 
+simple Launcher class. You may chose an other implementation, of course.
 
+**Please use your browser directly for every security-critical transmission.** 
+Mozilla Firefox and Google Chrome implements her own certificate handling for a 
+reason. Handling security in Java like here must be less secure in most 
+situations. See http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf "The Most 
+Dangerous Code in the World: Validating SSL Certificates in Non-Browser 
+Software".
 
 The MITM feature depends on the unreleased version of LittleProxy with little 
 modifications. Please consider to use 
@@ -112,9 +111,6 @@ Caused by: java.security.InvalidAlgorithmParameterException: Prime size must be 
     at com.sun.crypto.provider.DHKeyPairGenerator.initialize(DHKeyPairGenerator.java:120)
 ...
 ```
- * The LittleProxy features mitm and proxy chaining are mutually exclusive. See 
- the issue [#1133](https://github.com/netty/netty/issues/1133) - Netty Feature 
- request: Client proxy support - for a possibly solution resolved in Netty 5.
  * I'm not a natural English speaker/writer. So feel free to fix me if I'm wrong 
  (or always in generally) and don't feel sad about a phrase.
 
