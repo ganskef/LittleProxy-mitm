@@ -16,6 +16,8 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -143,31 +145,54 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
                 .build();
     }
 
+    private void filterWeakCipherSuites(SSLEngine sslEngine) {
+        List<String> ciphers = new LinkedList<String>();
+        for (String each : sslEngine.getEnabledCipherSuites()) {
+            if (each.equals(each.equals("TLS_DHE_RSA_WITH_AES_128_CBC_SHA")
+                    || each.equals("TLS_DHE_RSA_WITH_AES_256_CBC_SHA"))) {
+                LOG.debug("Removed cipher {}", each);
+            } else {
+                ciphers.add(each);
+            }
+        }
+        sslEngine.setEnabledCipherSuites(ciphers.toArray(new String[ciphers.size()]));
+        if (LOG.isDebugEnabled()) {
+            if (sslEngine.getUseClientMode()) {
+                LOG.debug("Enabled server cipher suites:");
+            } else {
+                String host = sslEngine.getPeerHost();
+                int port = sslEngine.getPeerPort();
+                LOG.debug("Enabled client {}:{} cipher suites:", host, port);
+            }
+            for (String each : ciphers) {
+                LOG.debug(each);
+            }
+        }
+    }
+
     public SSLEngine newSslEngine() {
-        return sslContext.createSSLEngine();
+        SSLEngine sslEngine = sslContext.createSSLEngine();
+        filterWeakCipherSuites(sslEngine);
+        return sslEngine;
     }
 
     @Override
     public SSLEngine newSslEngine(String remoteHost, int remotePort) {
         SSLEngine sslEngine = sslContext
                 .createSSLEngine(remoteHost, remotePort);
-
-        // XXX It's hard to provide Host Name Verification with an SSLEngine in
-        // Java 6. It's implemented internally for java.net.HttpsURLConnection
-        // only. For Netty a SSLHandler has to be added as an SSL handshake
-        // listener alternatively. -> WIP
-        //
-        if (tryHostNameVerificationJava7(sslEngine)
-                || tryHostNameVerificationJava6(sslEngine)) {
-            return sslEngine;
+        sslEngine.setUseClientMode(true);
+        if (!tryHostNameVerificationJava7(sslEngine) && !tryHostNameVerificationJava6(sslEngine)) {
+            LOG.debug("Host Name Verification is not supported, causes insecure HTTPS connection");
         }
-
-        // XXX consider to throw an Exception here, configurable eventually
-        //
-        LOG.error("Host Name Verification is not supported, causes insecure HTTPS connection");
+        filterWeakCipherSuites(sslEngine);
         return sslEngine;
     }
 
+    // XXX It's hard to provide Host Name Verification with an SSLEngine in
+    // Java 6. It's implemented internally for java.net.HttpsURLConnection
+    // only. For Netty a SSLHandler has to be added as an SSL handshake
+    // listener alternatively. -> WIP
+    //
     private boolean tryHostNameVerificationJava6(SSLEngine sslEngine) {
 
         // Very ugly internal access, but should work with Java 6 from Oracle,
@@ -275,6 +300,10 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
 
         sslContext = CertificateHelper.newClientContext(keyManagers,
                 trustManagers);
+        SSLEngine sslEngine = sslContext.createSSLEngine();
+        if (!tryHostNameVerificationJava7(sslEngine) && !tryHostNameVerificationJava6(sslEngine)) {
+            LOG.warn("Host Name Verification is not supported, causes insecure HTTPS connection to upstream servers.");
+        }
     }
 
     private KeyStore loadKeyStore() throws GeneralSecurityException,
