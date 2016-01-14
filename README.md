@@ -1,9 +1,12 @@
-[![Build Status](https://travis-ci.org/ganskef/LittleProxy-parent.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-parent)
+[![Build Status](https://travis-ci.org/ganskef/LittleProxy-mitm.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-mitm)
 
 LittleProxy-mitm is an extension for 
 [LittleProxy](https://github.com/adamfisk/LittleProxy) which enables 
 Man-In-The-Middle. It provides for so all the filter capabilities of LittleProxy 
-with HTTPS sites, too. See 
+with HTTPS sites, too. It's used on Android devices too, but HTTPS fails with 
+Version 5+ at the moment. To answer HTTPS while offline for caching purposes 
+consider to use 
+[ganskef/LittleProxy-parent](https://github.com/ganskef/LittleProxy-parent). See 
 [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a 
 detailed description of proxy interception processes. 
 
@@ -25,19 +28,7 @@ situations. See http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf "The Most
 Dangerous Code in the World: Validating SSL Certificates in Non-Browser 
 Software".
 
-The MITM feature depends on the unreleased version of LittleProxy with little 
-modifications. Please consider to use 
-[ganskef/LittleProxy-parent](https://github.com/ganskef/LittleProxy-parent) to 
-build both.
-
-
-You can embed LittleProxy-mitm in your own projects only by cloning it, for this 
-reason. It's not available in a public Maven repository. See LittleProxy CR 
-[#173](https://github.com/adamfisk/LittleProxy/issues/173) and PR 
-[#174](https://github.com/adamfisk/LittleProxy/pull/174).
-
-
-Once you've included LittleProxy-mitm, you can start the server with the following:
+Once you've built LittleProxy-mitm, you can start the server with the following:
 
 ```java
 HttpProxyServer server =

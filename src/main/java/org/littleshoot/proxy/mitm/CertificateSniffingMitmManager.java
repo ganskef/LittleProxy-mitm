@@ -41,8 +41,7 @@ public class CertificateSniffingMitmManager implements MitmManager {
         return sslEngineSource.newSslEngine(peerHost, peerPort);
     }
 
-    public SSLEngine clientSslEngineFor(SSLSession serverSslSession,
-            String serverHostAndPort) {
+    public SSLEngine clientSslEngineFor(SSLSession serverSslSession) {
         try {
             X509Certificate upstreamCert = getCertificateFromSession(serverSslSession);
             // TODO store the upstream cert by commonName to review it later
@@ -64,8 +63,7 @@ public class CertificateSniffingMitmManager implements MitmManager {
 
         } catch (Exception e) {
             throw new FakeCertificateException(
-                    "Creation dynamic certificate failed for "
-                            + serverHostAndPort, e);
+                    "Creation dynamic certificate failed", e);
         }
     }
 

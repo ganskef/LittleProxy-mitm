@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeThat;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.nio.channels.UnresolvedAddressException;
@@ -100,7 +101,10 @@ public class LittleProxyMitmTest {
         assertEquals("Offline response", FileUtils.readFileToString(proxied));
     }
 
-    @Test
+    // To use MITM without an Internet connection you have to use the branch
+    // enable_offline_caching_with_mitm
+    //
+    @Test(expected = IOException.class)
     public void testCachedResponseSecured() throws Exception {
         proxy.setConnectionLimited();
         String url = "https://somehost/somepath";
