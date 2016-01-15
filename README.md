@@ -3,9 +3,8 @@
 LittleProxy-mitm is an extension for 
 [LittleProxy](https://github.com/adamfisk/LittleProxy) which enables 
 Man-In-The-Middle. It provides for so all the filter capabilities of LittleProxy 
-with HTTPS sites, too. It's used on Android devices too, but HTTPS fails with 
-Version 5+ at the moment. To answer HTTPS while offline for caching purposes 
-consider to use 
+with HTTPS sites. It's used on Android devices too. To answer HTTPS while 
+offline for caching purposes consider to use 
 [ganskef/LittleProxy-parent](https://github.com/ganskef/LittleProxy-parent). See 
 [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a 
 detailed description of proxy interception processes. 
@@ -83,10 +82,7 @@ like this in your `FiltersSource` implementation:
 
 ###### Workarounds for Known Problems
 
- * Fixed: weak ciphers will be filtered now in LittleProxy-mitm ~~Using Mozilla Firefox (> 39) with the proxy running on Android (Version 4.4.4) I've seen a general SSL connection failure with error code `ssl_error_weak_server_ephemeral_dh_key`. (I've never seen it in a desktop environment.) A workaround found in the Web is to open `about:config`, search for `ssl3` and disable the first two entries containing `dhe_rsa`:~~
-
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android.png" width="350">
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android-fix.png" width="350">
+ * HTTPS fails with Exception: Handshake has already been started on Android Version 5+ (netty/netty#4718). It's possible to use the Netty 4.1 branch (4.1.0.CR1-SNAPSHOT) with one line commented out: https://github.com/netty/netty/blob/4.1/handler/src/main/java/io/netty/handler/ssl/SslHandler.java#L1266. This is not perfect, but it works with Android 5.0, 5.1, and 6.0.
 
  * Connection failure with some HTTPS sites like https://www.archlinux.org/ for example. You have to use [Java Cryptography Extension](http://en.wikipedia.org/wiki/Java_Cryptography_Extension) to fix it.
 ```
