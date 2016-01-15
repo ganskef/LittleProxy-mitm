@@ -206,6 +206,12 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+            </plugin>
         </plugins>
 
         <extensions>
@@ -285,7 +291,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.3</version>
                 <configuration>
                     <show>private</show>
                     <source>1.6</source>
@@ -304,6 +310,12 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
     </reporting>
 
     <developers>
+        <developer>
+            <name>Frank Ganske</name>
+            <email>frank.ganske@web.de</email>
+            <organization>GitHub</organization>
+            <organizationUrl>https://github.com/ganskef</organizationUrl>
+        </developer>
     </developers>
 
     <repositories>
