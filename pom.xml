@@ -38,9 +38,9 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git@github.com/ganskef/LittleProxy-mitm.git</connection>
+        <connection>scm:git:https://ganskef@github.com/ganskef/LittleProxy-mitm.git</connection>
         <developerConnection>scm:git:git@github.com:ganskef/LittleProxy-mitm.git</developerConnection>
-        <url>git@github.com:ganskef/LittleProxy-mitm.git</url>
+        <url>scm:git:git@github.com:ganskef/LittleProxy-mitm.git</url>
         <tag>HEAD</tag>
     </scm>
 
