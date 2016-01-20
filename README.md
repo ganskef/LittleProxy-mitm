@@ -18,8 +18,8 @@ generate server certificates on the fly. The ```littleproxy-mitm.pem``` file
 have to be imported in your browser or within the systems certificates, Mozilla 
 for example:
 
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-1.png" height="210">
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-2.png" height="210">
+<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-1.png" height="250">
+<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-2.png" height="250">
 
 You have to set your browsers proxy settings to 9090. It's hard coded in the 
 simple Launcher class. You may chose an other implementation, of course.
@@ -47,7 +47,7 @@ Add this dependency to your Maven build:
 The version corresponds to LittleProxy since the intention was to integrate it 
 as a module.
 
-### Wireing everything together
+### Wiring everything together
 
 Once you've included LittleProxy-mitm, you can start the server with the following:
 
