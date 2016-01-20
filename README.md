@@ -1,13 +1,17 @@
 [![Build Status](https://travis-ci.org/ganskef/LittleProxy-mitm.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-mitm)
+[![Published Version](https://img.shields.io/maven-central/v/com.github.ganskef/littleproxy-mitm.svg)](http://search.maven.org/#search|ga|1|g%3A%22com.github.ganskef%22%20AND%20a%3A%22littleproxy-mitm%22)
+
+LittleProxy - Man-In-The-Middle
+===============================
 
 LittleProxy-mitm is an extension for 
-[LittleProxy](https://github.com/adamfisk/LittleProxy) which enables 
-Man-In-The-Middle. It provides for so all the filter capabilities of LittleProxy 
-with HTTPS sites. It's used on Android devices too. To answer HTTPS while 
-offline for caching purposes consider to use 
-[ganskef/LittleProxy-parent](https://github.com/ganskef/LittleProxy-parent). See 
-[Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a 
-detailed description of proxy interception processes. 
+[LittleProxy](https://github.com/adamfisk/LittleProxy) which provides all the 
+filter capabilities of LittleProxy with HTTPS sites too. It aims to support 
+every Java platform including Android. To answer HTTPS while offline for caching 
+purposes consider to use 
+[ganskef/LittleProxy-parent](https://github.com/ganskef/LittleProxy-parent). 
+See [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) 
+for a detailed description of proxy interception processes. 
 
 The first run creates the key store for your Certificate Authority. It's used to 
 generate server certificates on the fly. The ```littleproxy-mitm.pem``` file 
@@ -20,6 +24,8 @@ for example:
 You have to set your browsers proxy settings to 9090. It's hard coded in the 
 simple Launcher class. You may chose an other implementation, of course.
 
+### Important Security Note
+
 **Please use your browser directly for every security-critical transmission.** 
 Mozilla Firefox and Google Chrome implements her own certificate handling for a 
 reason. Handling security in Java like here must be less secure in most 
@@ -27,18 +33,31 @@ situations. See http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf "The Most
 Dangerous Code in the World: Validating SSL Certificates in Non-Browser 
 Software".
 
-Once you've built LittleProxy-mitm, you can start the server with the following:
+### Getting the library
+
+Add this dependency to your Maven build:
+
+```xml
+<dependency>
+   <groupId>com.github.ganskef</groupId>
+   <artifactId>littleproxy-mitm</artifactId>
+   <version>1.1.0-beta1</version>
+</dependency>
+```
+The version corresponds to LittleProxy since the intention was to integrate it 
+as a module.
+
+### Wireing everything together
+
+Once you've included LittleProxy-mitm, you can start the server with the following:
 
 ```java
 HttpProxyServer server =
     DefaultHttpProxyServer.bootstrap()
-        .withPort(8080) // for both HTTP and HTTPS
-        .withManInTheMiddle(new HostNameMitmManager())
+        .withPort(9090) // for both HTTP and HTTPS
+        .withManInTheMiddle(new CertificateSniffingMitmManager())
         .start();
 ```
-
-Alternatively you can use `CertificateSniffingMitmManager` which copies the 
-Common Name and Subject Alternative Names from the upstream certificate.
 
 Please give an `Authority` in the constructor to personalize your application. 
 You impersonate certificates which is normally a bad thing. You have to describe 
@@ -47,6 +66,8 @@ the reason for.
 Please refer to the documentation of 
 [LittleProxy](https://github.com/adamfisk/LittleProxy) and the Javadoc of 
 `org.littleshoot.proxy.HttpFilters` to filter HTTP/S contents.
+
+### Resolving URI in case of HTTPS
 
 Mostly you will need an URL to handle content in your filters. With HTTP it's 
 provided by `originalRequest.getUri()`, but with HTTPS you have to get the host 
@@ -80,7 +101,7 @@ like this in your `FiltersSource` implementation:
  * Following requests on this channel have to concatenate the saved 
  `connected_url` with the URI from the `originalRequest`.
 
-###### Workarounds for Known Problems
+### Workarounds for Known Problems
 
  * HTTPS fails with Exception: Handshake has already been started on Android Version 5+ (https://github.com/netty/netty/issues/4718). It's possible to use the Netty 4.1 branch (4.1.0.CR1-SNAPSHOT) with one line commented out: https://github.com/netty/netty/blob/4.1/handler/src/main/java/io/netty/handler/ssl/SslHandler.java#L1266. This is not perfect, but it works with Android 5.0, 5.1, and 6.0.
 
