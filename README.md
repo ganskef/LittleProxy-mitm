@@ -13,6 +13,11 @@ purposes consider to use
 See [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) 
 for a detailed description of proxy interception processes. 
 
+### Get it up and running
+
+Execute this command: `java -jar littleproxy-mitm-1.1.0-beta1-shade.jar` Java is 
+required to be installed on your System. 
+
 The first run creates the key store for your Certificate Authority. It's used to 
 generate server certificates on the fly. The ```littleproxy-mitm.pem``` file 
 have to be imported in your browser or within the systems certificates, Mozilla 
