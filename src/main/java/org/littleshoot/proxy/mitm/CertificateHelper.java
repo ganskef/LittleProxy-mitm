@@ -71,7 +71,28 @@ public final class CertificateHelper {
 
     private static final String SECURE_RANDOM_ALGORITHM = "SHA1PRNG";
 
-    private static final String SIGNATURE_ALGORITHM = "SHA1WithRSAEncryption";
+    /**
+     * The signature algorithm starting with the message digest to use when
+     * signing certificates. On 64-bit systems this should be set to SHA512, on
+     * 32-bit systems this is SHA256. On 64-bit systems, SHA512 generally
+     * performs better than SHA256; see this question for details:
+     * http://crypto.stackexchange.com/questions/26336/sha512-faster-than-sha256
+     */
+    private static final String SIGNATURE_ALGORITHM = is32BitJvm() ? "SHA256" : "SHA512" + "WithRSAEncryption";
+
+    /**
+     * Uses the non-portable system property sun.arch.data.model to help
+     * determine if we are running on a 32-bit JVM. Since the majority of modern
+     * systems are 64 bits, this method "assumes" 64 bits and only returns true
+     * if sun.arch.data.model explicitly indicates a 32-bit JVM.
+     *
+     * @return true if we can determine definitively that this is a 32-bit JVM,
+     *         otherwise false
+     */
+    private static boolean is32BitJvm() {
+        Integer bits = Integer.getInteger("sun.arch.data.model");
+        return bits != null && bits == 32;
+    }
 
     private static final int ROOT_KEYSIZE = 2048;
 
@@ -81,8 +102,7 @@ public final class CertificateHelper {
      * Current time minus 1 year, just in case software clock goes back due to
      * time synchronization
      */
-    private static final Date NOT_BEFORE = new Date(
-            System.currentTimeMillis() - 86400000L * 365);
+    private static final Date NOT_BEFORE = new Date(System.currentTimeMillis() - 86400000L * 365);
 
     /**
      * The maximum possible value in X.509 specification: 9999-12-31 23:59:59,
