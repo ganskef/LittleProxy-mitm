@@ -40,15 +40,22 @@ reason. It's not available in a public Maven repository. See LittleProxy CR
 Once you've included LittleProxy-mitm, you can start the server with the following:
 
 ```java
+HostResolver serverResolver = new DefaultHostResolver() {
+    @Override
+    public InetSocketAddress resolve(String host, int port) throws UnknownHostException {
+        if (cache.isConnectionLimited()) {
+            return new InetSocketAddress(host, port);
+        }
+        return super.resolve(host, port);
+    }
+};
 HttpProxyServer server =
     DefaultHttpProxyServer.bootstrap()
         .withPort(8080) // for both HTTP and HTTPS
+        .withServerResolver(serverResolver);
         .withManInTheMiddle(new HostNameMitmManager())
         .start();
 ```
-
-Alternatively you can use `CertificateSniffingMitmManager` which copies the 
-Common Name and Subject Alternative Names from the upstream certificate.
 
 Please give an `Authority` in the constructor to personalize your application. 
 You impersonate certificates which is normally a bad thing. You have to describe 
