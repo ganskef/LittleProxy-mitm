@@ -23,7 +23,7 @@ public class Launcher {
                     .bootstrapFromFile("./littleproxy.properties")
                     .withPort(port).withAllowLocalOnly(false);
 
-            bootstrap.withManInTheMiddle(new CertificateSniffingMitmManager());
+            bootstrap.withManInTheMiddle(new HostNameMitmManager());
 
             System.out.println("About to start...");
             bootstrap.start();
