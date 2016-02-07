@@ -108,7 +108,7 @@ like this in your `FiltersSource` implementation:
 
 ### Workarounds for Known Problems
 
- * HTTPS fails with Exception: Handshake has already been started on Android Version 5+ (https://github.com/netty/netty/issues/4718). It's possible to use the Netty 4.1 branch (4.1.0.CR1-SNAPSHOT) with one line commented out: https://github.com/netty/netty/blob/4.1/handler/src/main/java/io/netty/handler/ssl/SslHandler.java#L1266. This is not perfect, but it works with Android 5.0, 5.1, and 6.0.
+ * HTTPS fails with Exception: Handshake has already been started on Android Version 5+ (https://github.com/netty/netty/issues/4718). It's fixed with [PR #4767](https://github.com/netty/netty/pull/4764). Using Netty 4.1.0.CR2-SNAPSHOT MITM works well with Android 5.0, 5.1, and 6.0, just as Java platforms too.
 
  * Connection failure with some HTTPS sites like https://www.archlinux.org/ for example. You have to use [Java Cryptography Extension](http://en.wikipedia.org/wiki/Java_Cryptography_Extension) to fix it.
 ```
