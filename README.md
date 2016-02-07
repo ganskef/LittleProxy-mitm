@@ -1,11 +1,19 @@
 [![Build Status](https://travis-ci.org/ganskef/LittleProxy-parent.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-parent)
 
+LittleProxy - Man-In-The-Middle
+===============================
+
 LittleProxy-mitm is an extension for 
 [LittleProxy](https://github.com/adamfisk/LittleProxy) which enables 
 Man-In-The-Middle. It provides for so all the filter capabilities of LittleProxy 
 with HTTPS sites, too. See 
 [Aldo Cortesi](http://corte.si/posts/code/mitmproxy/howitworks/index.html) for a 
 detailed description of proxy interception processes. 
+
+### Get it up and running
+
+Execute this command: `java -jar littleproxy-mitm-1.1.0-beta2-offline-shade.jar` 
+Java is required to be installed on your System. 
 
 The first run creates the key store for your Certificate Authority. It's used to 
 generate server certificates on the fly. The ```littleproxy-mitm.pem``` file 
@@ -18,6 +26,8 @@ for example:
 You have to set your browsers proxy settings to 9090. It's hard coded in the 
 simple Launcher class. You may chose an other implementation, of course.
 
+### Important Security Note
+
 **Please use your browser directly for every security-critical transmission.** 
 Mozilla Firefox and Google Chrome implements her own certificate handling for a 
 reason. Handling security in Java like here must be less secure in most 
@@ -25,8 +35,10 @@ situations. See http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf "The Most
 Dangerous Code in the World: Validating SSL Certificates in Non-Browser 
 Software".
 
-The MITM feature depends on the unreleased version of LittleProxy with little 
-modifications. Please consider to use 
+### Getting the library
+
+The MITM feature while offline depends on a unreleased version of LittleProxy 
+with little modifications. Please consider to use 
 [ganskef/LittleProxy-parent](https://github.com/ganskef/LittleProxy-parent) to 
 build both.
 
@@ -36,6 +48,7 @@ reason. It's not available in a public Maven repository. See LittleProxy CR
 [#173](https://github.com/adamfisk/LittleProxy/issues/173) and PR 
 [#174](https://github.com/adamfisk/LittleProxy/pull/174).
 
+### Wiring everything together
 
 Once you've included LittleProxy-mitm, you can start the server with the following:
 
@@ -64,6 +77,8 @@ the reason for.
 Please refer to the documentation of 
 [LittleProxy](https://github.com/adamfisk/LittleProxy) and the Javadoc of 
 `org.littleshoot.proxy.HttpFilters` to filter HTTP/S contents.
+
+### Resolving URI in case of HTTPS
 
 Mostly you will need an URL to handle content in your filters. With HTTP it's 
 provided by `originalRequest.getUri()`, but with HTTPS you have to get the host 
@@ -97,12 +112,9 @@ like this in your `FiltersSource` implementation:
  * Following requests on this channel have to concatenate the saved 
  `connected_url` with the URI from the `originalRequest`.
 
-###### Workarounds for Known Problems
+### Workarounds for Known Problems
 
- * Fixed: weak ciphers will be filtered now in LittleProxy-mitm ~~Using Mozilla Firefox (> 39) with the proxy running on Android (Version 4.4.4) I've seen a general SSL connection failure with error code `ssl_error_weak_server_ephemeral_dh_key`. (I've never seen it in a desktop environment.) A workaround found in the Web is to open `about:config`, search for `ssl3` and disable the first two entries containing `dhe_rsa`:~~
-
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android.png" width="350">
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/ssl-weak-android-fix.png" width="350">
+ * HTTPS fails with Exception: Handshake has already been started on Android Version 5+ (https://github.com/netty/netty/issues/4718). It's fixed with [PR #4767](https://github.com/netty/netty/pull/4764). Using Netty 4.1.0.CR2-SNAPSHOT MITM works well with Android 5.0, 5.1, and 6.0, just as Java platforms too.
 
  * Connection failure with some HTTPS sites like https://www.archlinux.org/ for example. You have to use [Java Cryptography Extension](http://en.wikipedia.org/wiki/Java_Cryptography_Extension) to fix it.
 ```
