@@ -46,11 +46,12 @@ Add this dependency to your Maven build:
 <dependency>
    <groupId>com.github.ganskef</groupId>
    <artifactId>littleproxy-mitm</artifactId>
-   <version>1.1.0-beta1</version>
+   <version>1.1.0-beta2b</version>
 </dependency>
 ```
 The version corresponds to LittleProxy since the intention was to integrate it 
-as a module.
+as a module. **Note:** the 1.1.0-beta2 version points to the wrong LittleProxy 
+version 1.1.0-beta2. Please use 1.1.0-beta2b with an additional b therefore.
 
 ### Wiring everything together
 
