@@ -67,7 +67,7 @@ public class Client implements IClient {
 
     protected SSLContext initSslContext() throws GeneralSecurityException,
             IOException {
-        SSLContext context = SSLContext.getInstance("TLS");
+        SSLContext context = SSLContext.getInstance("TLSv1.2");
         TrustManager[] trustManagers = InsecureTrustManagerFactory.INSTANCE
                 .getTrustManagers();
         context.init(null, trustManagers, null);
