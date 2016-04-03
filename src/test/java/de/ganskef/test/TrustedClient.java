@@ -27,7 +27,7 @@ public class TrustedClient extends Client implements IClient {
         is.close();
 
         X509TrustManager customTm = new MergeTrustManager(ks);
-        SSLContext context = SSLContext.getInstance("TLS");
+        SSLContext context = SSLContext.getInstance("TLSv1.2");
         context.init(null, new TrustManager[] { customTm }, null);
         return context;
     }
