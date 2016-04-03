@@ -51,7 +51,7 @@ Add this dependency to your Maven build:
 ```
 The version corresponds to LittleProxy since the intention was to integrate it 
 as a module. **Note:** the 1.1.0-beta2 version points to the wrong LittleProxy 
-version 1.1.0-beta2. Please use 1.1.0-beta2b with an additional b therefore.
+version 1.1.0-beta1. Please use 1.1.0-beta2b with an additional *b* therefore.
 
 ### Wiring everything together
 
