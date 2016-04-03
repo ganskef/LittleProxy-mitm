@@ -15,7 +15,7 @@ for a detailed description of proxy interception processes.
 
 ### Get it up and running
 
-Execute this command: `java -jar littleproxy-mitm-1.1.0-beta1-shade.jar` Java is 
+Execute this command: `java -jar littleproxy-mitm-1.1.0-beta2b-shade.jar` Java is 
 required to be installed on your System. 
 
 The first run creates the key store for your Certificate Authority. It's used to 
