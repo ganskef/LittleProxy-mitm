@@ -283,7 +283,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         caPrivKey = (PrivateKey) ks.getKey(authority.alias(),
                 authority.password());
 
-        TrustManager[] trustManagers = null;
+        TrustManager[] trustManagers;
         if (trustAllServers) {
             trustManagers = InsecureTrustManagerFactory.INSTANCE
                     .getTrustManagers();
@@ -291,7 +291,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
             trustManagers = new TrustManager[] { new MergeTrustManager(ks) };
         }
 
-        KeyManager[] keyManagers = null;
+        KeyManager[] keyManagers;
         if (sendCerts) {
             keyManagers = CertificateHelper.getKeyManagers(ks, authority);
         } else {
