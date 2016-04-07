@@ -5,8 +5,12 @@ import java.io.File;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Launcher {
+
+    private static final Logger log = LoggerFactory.getLogger(Launcher.class);
 
     public static void main(final String... args) {
         File log4jConfigurationFile = new File(
@@ -29,7 +33,7 @@ public class Launcher {
             bootstrap.start();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             System.exit(1);
         }
     }
