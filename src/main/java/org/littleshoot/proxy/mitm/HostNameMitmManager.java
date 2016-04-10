@@ -34,6 +34,11 @@ public class HostNameMitmManager implements MitmManager {
         return sslEngineSource.newSslEngine(peerHost, peerPort);
     }
 
+    @Override
+    public SSLEngine serverSslEngine() {
+        return sslEngineSource.newSslEngine();
+    }
+
     public SSLEngine clientSslEngineFor(SSLSession serverSslSession,
             String serverHostAndPort) {
         try {

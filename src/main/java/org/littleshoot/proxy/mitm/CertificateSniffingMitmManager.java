@@ -37,6 +37,11 @@ public class CertificateSniffingMitmManager implements MitmManager {
         }
     }
 
+    @Override
+    public SSLEngine serverSslEngine() {
+        return sslEngineSource.newSslEngine();
+    }
+
     public SSLEngine serverSslEngine(String peerHost, int peerPort) {
         return sslEngineSource.newSslEngine(peerHost, peerPort);
     }
