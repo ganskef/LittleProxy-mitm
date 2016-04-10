@@ -15,8 +15,10 @@ for a detailed description of proxy interception processes.
 
 ### Get it up and running
 
-Execute this command: `java -jar littleproxy-mitm-1.1.0-beta2b-shade.jar` Java is 
-required to be installed on your System. 
+*Java* is required to be installed on the system, then execute this commands: <pre>
+$ java -jar littleproxy-mitm-1.1.0-beta2b-shade.jar
+$ curl --cacert littleproxy-mitm.pem --verbose --proxy localhost:9090 https://github.com/
+</pre>
 
 The first run creates the key store for your Certificate Authority. It's used to 
 generate server certificates on the fly. The ```littleproxy-mitm.pem``` file 
