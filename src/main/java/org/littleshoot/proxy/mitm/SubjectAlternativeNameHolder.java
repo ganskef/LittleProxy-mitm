@@ -47,8 +47,8 @@ public class SubjectAlternativeNameHolder {
     }
 
     private ASN1Encodable parseGeneralName(List<?> nameEntry) {
-        if (nameEntry != null && nameEntry.size() != 2) {
-            throw new IllegalArgumentException(String.valueOf(nameEntry));
+        if (nameEntry == null || nameEntry.size() != 2) {
+            throw new IllegalArgumentException(nameEntry != null ? String.valueOf(nameEntry) : "nameEntry is null");
         }
         String tag = String.valueOf(nameEntry.get(0));
         Matcher m = TAGS_PATTERN.matcher(tag);

@@ -71,7 +71,6 @@ public class CertificateSniffingMitmManager implements MitmManager {
             throws SSLPeerUnverifiedException {
         Certificate[] peerCerts = sslSession.getPeerCertificates();
         Certificate peerCert = peerCerts[0];
-        // log.debug("Upstream Certificate: {}", peerCert);
         if (peerCert instanceof java.security.cert.X509Certificate) {
             return (java.security.cert.X509Certificate) peerCert;
         }

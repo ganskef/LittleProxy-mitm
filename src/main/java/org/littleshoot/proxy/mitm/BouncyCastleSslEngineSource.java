@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import sun.security.ssl.SSLEngineImpl;
 
 /**
  * A {@link SslEngineSource} which creates a key store with a Root Certificate
@@ -56,8 +57,9 @@ import com.google.common.cache.CacheBuilder;
  */
 public class BouncyCastleSslEngineSource implements SslEngineSource {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(BouncyCastleSslEngineSource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BouncyCastleSslEngineSource.class);
+
+    public static final String SSLENGINE_IMPL_TRY_HOST_NAME_VERIFICATION = "sun.security.ssl.SSLEngineImpl#tryHostNameVerification";
 
     /**
      * The P12 format has to be implemented by every vendor. Oracles proprietary
@@ -108,9 +110,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         this.authority = authority;
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
-        // this.serverCertificateSerial = initRandomSerial();
         this.serverSSLContexts = sslContexts;
-        // Security.addProvider(new BouncyCastleProvider());
         initializeKeyStore();
         initializeSSLContext();
     }
@@ -148,8 +148,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
     private void filterWeakCipherSuites(SSLEngine sslEngine) {
         List<String> ciphers = new LinkedList<String>();
         for (String each : sslEngine.getEnabledCipherSuites()) {
-            if (each.equals(each.equals("TLS_DHE_RSA_WITH_AES_128_CBC_SHA")
-                    || each.equals("TLS_DHE_RSA_WITH_AES_256_CBC_SHA"))) {
+            if (each.equals("TLS_DHE_RSA_WITH_AES_128_CBC_SHA") || each.equals("TLS_DHE_RSA_WITH_AES_256_CBC_SHA")) {
                 LOG.debug("Removed cipher {}", each);
             } else {
                 ciphers.add(each);
@@ -198,8 +197,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         // Very ugly internal access, but should work with Java 6 from Oracle,
         // but won't work with my Java 6 from Apple and what's about Android?
         //
-        if ("sun.security.ssl.SSLEngineImpl".equals(sslEngine.getClass()
-                .getName())) {
+        if (SSLEngineImpl.class.isInstance(sslEngine)) {
             try {
                 Method method = sslEngine.getClass().getMethod(
                         "tryHostNameVerification", String.class);
@@ -207,19 +205,20 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
                 return true;
             } catch (IllegalAccessException e) {
                 LOG.debug(
-                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
+                        SSLENGINE_IMPL_TRY_HOST_NAME_VERIFICATION,
                         e);
             } catch (InvocationTargetException e) {
                 LOG.debug(
-                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
+                        SSLENGINE_IMPL_TRY_HOST_NAME_VERIFICATION,
                         e);
+
             } catch (NoSuchMethodException e) {
                 LOG.debug(
-                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
+                        SSLENGINE_IMPL_TRY_HOST_NAME_VERIFICATION,
                         e);
             } catch (SecurityException e) {
                 LOG.debug(
-                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
+                        SSLENGINE_IMPL_TRY_HOST_NAME_VERIFICATION,
                         e);
             }
         }
