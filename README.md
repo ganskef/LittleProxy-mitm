@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/ganskef/LittleProxy-mitm.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-mitm)
-[![Published Version](https://img.shields.io/maven-central/v/com.github.ganskef/littleproxy-mitm.svg)](http://search.maven.org/#search|ga|1|g%3A%22com.github.ganskef%22%20AND%20a%3A%22littleproxy-mitm%22)
+[![Published Version](https://img.shields.io/maven-central/v/com.github.ganskef/littleproxy-mitm.svg)](http://search.maven.org/#search|ga|1|g%3A%22com.github.ganskef%22%20AND%20a%3A%22littleproxy-mitm%22)<br />
+**Note:** The build is broken since the master depends on LittleProxy SNAPSHOT to fix issue [#2](https://github.com/ganskef/LittleProxy-mitm/issues/2).
 
 LittleProxy - Man-In-The-Middle
 ===============================
