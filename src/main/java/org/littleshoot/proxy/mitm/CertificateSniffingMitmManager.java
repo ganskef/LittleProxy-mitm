@@ -41,6 +41,10 @@ public class CertificateSniffingMitmManager implements MitmManager {
         return sslEngineSource.newSslEngine(peerHost, peerPort);
     }
 
+    public SSLEngine serverSslEngine() {
+        return sslEngineSource.newSslEngine();
+    }
+
     public SSLEngine clientSslEngineFor(SSLSession serverSslSession) {
         try {
             X509Certificate upstreamCert = getCertificateFromSession(serverSslSession);
