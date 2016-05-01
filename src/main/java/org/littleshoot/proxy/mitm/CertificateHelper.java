@@ -77,7 +77,7 @@ public final class CertificateHelper {
      * performs better than SHA256; see this question for details:
      * http://crypto.stackexchange.com/questions/26336/sha512-faster-than-sha256
      */
-    private static final String SIGNATURE_ALGORITHM = is32BitJvm() ? "SHA256" : "SHA512" + "WithRSAEncryption";
+    private static final String SIGNATURE_ALGORITHM = (is32BitJvm() ? "SHA256" : "SHA512") + "WithRSAEncryption";
 
     private static final int ROOT_KEYSIZE = 2048;
 
