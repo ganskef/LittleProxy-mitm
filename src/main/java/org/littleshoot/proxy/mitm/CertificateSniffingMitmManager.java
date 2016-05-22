@@ -11,6 +11,8 @@ import org.littleshoot.proxy.MitmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.handler.codec.http.HttpRequest;
+
 /**
  * {@link MitmManager} that uses the common name and subject alternative names
  * from the upstream certificate to create a dynamic certificate with it.
@@ -46,8 +48,8 @@ public class CertificateSniffingMitmManager implements MitmManager {
         return sslEngineSource.newSslEngine(peerHost, peerPort);
     }
 
-    public SSLEngine clientSslEngineFor(SSLSession serverSslSession,
-            String serverHostAndPort) {
+    public SSLEngine clientSslEngineFor(HttpRequest httpRequest, SSLSession serverSslSession) {
+        String serverHostAndPort = httpRequest.getUri();
         try {
             X509Certificate upstreamCert = getCertificateFromSession(serverSslSession);
             // TODO store the upstream cert by commonName to review it later
