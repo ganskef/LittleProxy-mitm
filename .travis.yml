@@ -1,1 +1,6 @@
 language: java
+
+branches:
+  except:
+# Disabled since it depends on the ganskef/LittleProxy offline branch.
+    - enable_offline_caching_with_mitm
