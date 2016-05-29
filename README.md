@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.org/ganskef/LittleProxy-mitm.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-mitm)
 [![Published Version](https://img.shields.io/maven-central/v/com.github.ganskef/littleproxy-mitm.svg)](http://search.maven.org/#search|ga|1|g%3A%22com.github.ganskef%22%20AND%20a%3A%22littleproxy-mitm%22)<br />
-**Note:** The build is broken since the master depends on LittleProxy SNAPSHOT to fix issue [#2](https://github.com/ganskef/LittleProxy-mitm/issues/2).
 
 LittleProxy - Man-In-The-Middle
 ===============================
@@ -17,7 +16,7 @@ for a detailed description of proxy interception processes.
 ### Get it up and running
 
 *Java* is required to be installed on the system, then execute this commands: <pre>
-$ java -jar littleproxy-mitm-1.1.0-beta2b-shade.jar
+$ java -jar littleproxy-mitm-1.1.0-shade.jar
 $ curl --cacert littleproxy-mitm.pem --verbose --proxy localhost:9090 https://github.com/
 </pre>
 
@@ -49,12 +48,11 @@ Add this dependency to your Maven build:
 <dependency>
    <groupId>com.github.ganskef</groupId>
    <artifactId>littleproxy-mitm</artifactId>
-   <version>1.1.0-beta2b</version>
+   <version>1.1.0</version>
 </dependency>
 ```
 The version corresponds to LittleProxy since the intention was to integrate it 
-as a module. **Note:** the 1.1.0-beta2 version points to the wrong LittleProxy 
-version 1.1.0-beta1. Please use 1.1.0-beta2b with an additional *b* therefore.
+as a module.
 
 ### Wiring everything together
 
