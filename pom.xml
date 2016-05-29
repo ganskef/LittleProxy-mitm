@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.ganskef</groupId>
     <artifactId>littleproxy-mitm</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.0-beta3-offline</version>
+    <version>1.1.1-offline</version>
     <name>LittleProxy - Man-In-The-Middle</name>
     <description>LittleProxy is a high performance HTTP proxy written in Java and using the Netty networking framework.
 
@@ -17,11 +16,13 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
         <github.global.server>github</github.global.server>
         <skipTests>false</skipTests>
         <!-- Versions should better be retrieved from a parent module. -->
-        <netty.version>4.0.35.Final</netty.version>
+        <netty.version>4.0.36.Final</netty.version>
+        <slf4j.version>1.7.21</slf4j.version>
         <bouncycastle.version>1.51</bouncycastle.version>
-        <littleproxy.version>${project.version}</littleproxy.version>
+        <littleproxy.version>1.1.1-offline</littleproxy.version>
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.0.0.1</hamcrest.version>
+        <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
     </properties>
 
     <licenses>
@@ -38,8 +39,9 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 
     <scm>
         <connection>scm:git:https://ganskef@github.com/ganskef/LittleProxy-mitm.git</connection>
-        <developerConnection>scm:git:git@github.com:ganskef/LittleProxy-mitm</developerConnection>
+        <developerConnection>scm:git:git@github.com:ganskef/LittleProxy-mitm.git</developerConnection>
         <url>scm:git:git@github.com:ganskef/LittleProxy-mitm.git</url>
+        <tag>HEAD</tag>
     </scm>
 
     <inceptionYear>2015</inceptionYear>
@@ -106,7 +108,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.19</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
     </dependencies>
@@ -117,17 +119,6 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.5</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>sonatype-nexus-staging</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -150,7 +141,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>${maven-jar-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -188,8 +179,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                             </filters>
 
                             <transformers>
-                                <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
                                         <Main-Class>org.littleshoot.proxy.mitm.Launcher</Main-Class>
                                         <Class-Path>.</Class-Path>
@@ -205,6 +195,65 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <configuration>
+                    <show>private</show>
+                    <source>1.6</source>
+                    <links>
+                        <link>http://netty.io/4.0/api/</link>
+                    </links>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
             </plugin>
         </plugins>
 
@@ -283,19 +332,6 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <configuration>
-                    <show>private</show>
-                    <source>1.6</source>
-                    <links>
-                        <link>http://netty.io/4.0/api/</link>
-                    </links>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jxr-maven-plugin</artifactId>
                 <version>2.3</version>
@@ -304,8 +340,78 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
     </reporting>
 
     <developers>
+        <developer>
+            <name>Frank Ganske</name>
+            <email>frank.ganske@web.de</email>
+        </developer>
     </developers>
 
-    <repositories>
-    </repositories>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>${maven-jar-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>empty-javadoc-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>javadoc</classifier>
+                                    <includes>
+                                        <include>**/*.html</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

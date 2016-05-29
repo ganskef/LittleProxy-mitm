@@ -39,17 +39,15 @@ public class CertificateSniffingMitmManager implements MitmManager {
         }
     }
 
-    @Override
-    public SSLEngine serverSslEngine() {
-        return sslEngineSource.newSslEngine();
-    }
-
     public SSLEngine serverSslEngine(String peerHost, int peerPort) {
         return sslEngineSource.newSslEngine(peerHost, peerPort);
     }
 
+    public SSLEngine serverSslEngine() {
+        return sslEngineSource.newSslEngine();
+    }
+
     public SSLEngine clientSslEngineFor(HttpRequest httpRequest, SSLSession serverSslSession) {
-        String serverHostAndPort = httpRequest.getUri();
         try {
             X509Certificate upstreamCert = getCertificateFromSession(serverSslSession);
             // TODO store the upstream cert by commonName to review it later
@@ -71,8 +69,7 @@ public class CertificateSniffingMitmManager implements MitmManager {
 
         } catch (Exception e) {
             throw new FakeCertificateException(
-                    "Creation dynamic certificate failed for "
-                            + serverHostAndPort, e);
+                    "Creation dynamic certificate failed", e);
         }
     }
 
@@ -80,7 +77,6 @@ public class CertificateSniffingMitmManager implements MitmManager {
             throws SSLPeerUnverifiedException {
         Certificate[] peerCerts = sslSession.getPeerCertificates();
         Certificate peerCert = peerCerts[0];
-        // log.debug("Upstream Certificate: {}", peerCert);
         if (peerCert instanceof java.security.cert.X509Certificate) {
             return (java.security.cert.X509Certificate) peerCert;
         }

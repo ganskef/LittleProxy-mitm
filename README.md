@@ -12,16 +12,18 @@ detailed description of proxy interception processes.
 
 ### Get it up and running
 
-Execute this command: `java -jar littleproxy-mitm-1.1.0-beta2-offline-shade.jar` 
-Java is required to be installed on your System. 
+*Java* is required to be installed on the system, then execute this commands: <pre>
+$ java -jar littleproxy-mitm-1.1.1-offline-shade.jar
+$ curl --cacert littleproxy-mitm.pem --verbose --proxy localhost:9090 https://github.com/
+</pre>
 
 The first run creates the key store for your Certificate Authority. It's used to 
 generate server certificates on the fly. The ```littleproxy-mitm.pem``` file 
 have to be imported in your browser or within the systems certificates, Mozilla 
 for example:
 
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-1.png" height="210">
-<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-2.png" height="210">
+<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-1.png" height="250">
+<img src="https://github.com/ganskef/LittleProxy-mitm/blob/master/import-mozilla-2.png" height="250">
 
 You have to set your browsers proxy settings to 9090. It's hard coded in the 
 simple Launcher class. You may chose an other implementation, of course.
@@ -64,7 +66,7 @@ HostResolver serverResolver = new DefaultHostResolver() {
 };
 HttpProxyServer server =
     DefaultHttpProxyServer.bootstrap()
-        .withPort(8080) // for both HTTP and HTTPS
+        .withPort(9090) // for both HTTP and HTTPS
         .withServerResolver(serverResolver);
         .withManInTheMiddle(new HostNameMitmManager())
         .start();

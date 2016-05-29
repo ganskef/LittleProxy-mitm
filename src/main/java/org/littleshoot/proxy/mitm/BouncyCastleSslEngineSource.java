@@ -56,8 +56,7 @@ import com.google.common.cache.CacheBuilder;
  */
 public class BouncyCastleSslEngineSource implements SslEngineSource {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(BouncyCastleSslEngineSource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BouncyCastleSslEngineSource.class);
 
     /**
      * The P12 format has to be implemented by every vendor. Oracles proprietary
@@ -108,9 +107,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         this.authority = authority;
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
-        // this.serverCertificateSerial = initRandomSerial();
         this.serverSSLContexts = sslContexts;
-        // Security.addProvider(new BouncyCastleProvider());
         initializeKeyStore();
         initializeSSLContext();
     }
@@ -148,8 +145,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
     private void filterWeakCipherSuites(SSLEngine sslEngine) {
         List<String> ciphers = new LinkedList<String>();
         for (String each : sslEngine.getEnabledCipherSuites()) {
-            if (each.equals(each.equals("TLS_DHE_RSA_WITH_AES_128_CBC_SHA")
-                    || each.equals("TLS_DHE_RSA_WITH_AES_256_CBC_SHA"))) {
+            if (each.equals("TLS_DHE_RSA_WITH_AES_128_CBC_SHA") || each.equals("TLS_DHE_RSA_WITH_AES_256_CBC_SHA")) {
                 LOG.debug("Removed cipher {}", each);
             } else {
                 ciphers.add(each);
@@ -181,49 +177,11 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         SSLEngine sslEngine = sslContext
                 .createSSLEngine(remoteHost, remotePort);
         sslEngine.setUseClientMode(true);
-        if (!tryHostNameVerificationJava7(sslEngine) && !tryHostNameVerificationJava6(sslEngine)) {
+        if (!tryHostNameVerificationJava7(sslEngine)) {
             LOG.debug("Host Name Verification is not supported, causes insecure HTTPS connection");
         }
         filterWeakCipherSuites(sslEngine);
         return sslEngine;
-    }
-
-    // XXX It's hard to provide Host Name Verification with an SSLEngine in
-    // Java 6. It's implemented internally for java.net.HttpsURLConnection
-    // only. For Netty a SSLHandler has to be added as an SSL handshake
-    // listener alternatively. -> WIP
-    //
-    private boolean tryHostNameVerificationJava6(SSLEngine sslEngine) {
-
-        // Very ugly internal access, but should work with Java 6 from Oracle,
-        // but won't work with my Java 6 from Apple and what's about Android?
-        //
-        if ("sun.security.ssl.SSLEngineImpl".equals(sslEngine.getClass()
-                .getName())) {
-            try {
-                Method method = sslEngine.getClass().getMethod(
-                        "tryHostNameVerification", String.class);
-                method.invoke(sslEngine, "HTTPS");
-                return true;
-            } catch (IllegalAccessException e) {
-                LOG.debug(
-                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
-                        e);
-            } catch (InvocationTargetException e) {
-                LOG.debug(
-                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
-                        e);
-            } catch (NoSuchMethodException e) {
-                LOG.debug(
-                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
-                        e);
-            } catch (SecurityException e) {
-                LOG.debug(
-                        "sun.security.ssl.SSLEngineImpl#tryHostNameVerification",
-                        e);
-            }
-        }
-        return false;
     }
 
     private boolean tryHostNameVerificationJava7(SSLEngine sslEngine) {
@@ -283,7 +241,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         caPrivKey = (PrivateKey) ks.getKey(authority.alias(),
                 authority.password());
 
-        TrustManager[] trustManagers = null;
+        TrustManager[] trustManagers;
         if (trustAllServers) {
             trustManagers = InsecureTrustManagerFactory.INSTANCE
                     .getTrustManagers();
@@ -291,7 +249,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
             trustManagers = new TrustManager[] { new MergeTrustManager(ks) };
         }
 
-        KeyManager[] keyManagers = null;
+        KeyManager[] keyManagers;
         if (sendCerts) {
             keyManagers = CertificateHelper.getKeyManagers(ks, authority);
         } else {
@@ -301,7 +259,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         sslContext = CertificateHelper.newClientContext(keyManagers,
                 trustManagers);
         SSLEngine sslEngine = sslContext.createSSLEngine();
-        if (!tryHostNameVerificationJava7(sslEngine) && !tryHostNameVerificationJava6(sslEngine)) {
+        if (!tryHostNameVerificationJava7(sslEngine)) {
             LOG.warn("Host Name Verification is not supported, causes insecure HTTPS connection to upstream servers.");
         }
     }

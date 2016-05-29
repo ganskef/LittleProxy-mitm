@@ -44,7 +44,6 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.bc.BcX509ExtensionUtils;
@@ -79,20 +78,6 @@ public final class CertificateHelper {
      * http://crypto.stackexchange.com/questions/26336/sha512-faster-than-sha256
      */
     private static final String SIGNATURE_ALGORITHM = (is32BitJvm() ? "SHA256" : "SHA512") + "WithRSAEncryption";
-
-    /**
-     * Uses the non-portable system property sun.arch.data.model to help
-     * determine if we are running on a 32-bit JVM. Since the majority of modern
-     * systems are 64 bits, this method "assumes" 64 bits and only returns true
-     * if sun.arch.data.model explicitly indicates a 32-bit JVM.
-     *
-     * @return true if we can determine definitively that this is a 32-bit JVM,
-     *         otherwise false
-     */
-    private static boolean is32BitJvm() {
-        Integer bits = Integer.getInteger("sun.arch.data.model");
-        return bits != null && bits == 32;
-    }
 
     private static final int ROOT_KEYSIZE = 2048;
 
@@ -133,6 +118,8 @@ public final class CertificateHelper {
      */
     private static final String SSL_CONTEXT_FALLBACK_PROTOCOL = "TLSv1";
 
+    private CertificateHelper() {}
+
     public static KeyPair generateKeyPair(int keySize)
             throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator generator = KeyPairGenerator
@@ -143,9 +130,23 @@ public final class CertificateHelper {
         return generator.generateKeyPair();
     }
 
+    /**
+     * Uses the non-portable system property sun.arch.data.model to help
+     * determine if we are running on a 32-bit JVM. Since the majority of modern
+     * systems are 64 bits, this method "assumes" 64 bits and only returns true
+     * if sun.arch.data.model explicitly indicates a 32-bit JVM.
+     *
+     * @return true if we can determine definitively that this is a 32-bit JVM,
+     *         otherwise false
+     */
+    private static boolean is32BitJvm() {
+        Integer bits = Integer.getInteger("sun.arch.data.model");
+        return bits != null && bits == 32;
+    }
+
     public static KeyStore createRootCertificate(Authority authority,
             String keyStoreType) throws NoSuchAlgorithmException,
-            NoSuchProviderException, CertIOException, IOException,
+            NoSuchProviderException, IOException,
             OperatorCreationException, CertificateException, KeyStoreException {
 
         KeyPair keyPair = generateKeyPair(ROOT_KEYSIZE);
@@ -255,9 +256,8 @@ public final class CertificateHelper {
             CertificateException {
         ContentSigner signer = new JcaContentSignerBuilder(SIGNATURE_ALGORITHM)
                 .setProvider(PROVIDER_NAME).build(signedWithPrivateKey);
-        X509Certificate cert = new JcaX509CertificateConverter().setProvider(
+        return new JcaX509CertificateConverter().setProvider(
                 PROVIDER_NAME).getCertificate(certificateBuilder.build(signer));
-        return cert;
     }
 
     public static TrustManager[] getTrustManagers(KeyStore keyStore)
