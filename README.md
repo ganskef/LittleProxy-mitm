@@ -98,7 +98,7 @@ like this in your `FiltersSource` implementation:
         String uri = originalRequest.getUri();
         if (originalRequest.getMethod() == HttpMethod.CONNECT) {
             if (clientCtx != null) {
-                String prefix = "https://" + uri.replaceFirst(":443", "");
+                String prefix = "https://" + uri.replaceFirst(":443$", "");
                 clientCtx.channel().attr(CONNECTED_URL).set(prefix);
             }
             return new HttpFiltersAdapter(originalRequest, clientCtx);
