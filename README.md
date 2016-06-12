@@ -52,24 +52,27 @@ reason. It's not available in a public Maven repository. See LittleProxy CR
 
 ### Wiring everything together
 
+To enable *MITM* while offline it necessary to use a special `HostResolver` and 
+the `HostNameMitmManager`.
+
 Once you've included LittleProxy-mitm, you can start the server with the following:
 
 ```java
-HostResolver serverResolver = new DefaultHostResolver() {
-    @Override
-    public InetSocketAddress resolve(String host, int port) throws UnknownHostException {
-        if (cache.isConnectionLimited()) {
-            return new InetSocketAddress(host, port);
+    HostResolver serverResolver = new DefaultHostResolver() {
+        @Override
+        public InetSocketAddress resolve(String host, int port) throws UnknownHostException {
+            if (cache.isConnectionLimited()) { // <- enable offline
+                return new InetSocketAddress(host, port);
+            }
+            return super.resolve(host, port);
         }
-        return super.resolve(host, port);
-    }
-};
-HttpProxyServer server =
-    DefaultHttpProxyServer.bootstrap()
-        .withPort(9090) // for both HTTP and HTTPS
-        .withServerResolver(serverResolver);
-        .withManInTheMiddle(new HostNameMitmManager())
-        .start();
+    };
+    HttpProxyServer server =
+        DefaultHttpProxyServer.bootstrap()
+            .withPort(9090) // for both HTTP and HTTPS
+            .withServerResolver(serverResolver); // <- enable offline
+            .withManInTheMiddle(new HostNameMitmManager()) // <- enable offline
+            .start();
 ```
 
 Please give an `Authority` in the constructor to personalize your application. 
