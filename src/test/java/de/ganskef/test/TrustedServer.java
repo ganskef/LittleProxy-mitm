@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.littleshoot.proxy.mitm.Authority;
 import org.littleshoot.proxy.mitm.BouncyCastleSslEngineSource;
+import org.littleshoot.proxy.mitm.CertificateConfig;
 import org.littleshoot.proxy.mitm.SubjectAlternativeNameHolder;
 
 public class TrustedServer extends SecureServer {
@@ -21,7 +22,7 @@ public class TrustedServer extends SecureServer {
 
     public Server start() throws Exception {
         BouncyCastleSslEngineSource es = new BouncyCastleSslEngineSource(
-                new Authority(), true, true);
+                CertificateConfig.newConfig(new Authority()).build(), true, true);
         SubjectAlternativeNameHolder san = new SubjectAlternativeNameHolder();
         // san.addDomainName("localhost");
         es.initializeServerCertificates(commonName, san);

@@ -66,7 +66,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
 
     private static final String KEY_STORE_FILE_EXTENSION = ".p12";
 
-    private final Authority authority;
+    private final CertificateConfig certConfig;
 
     private final boolean trustAllServers;
     private final boolean sendCerts;
@@ -85,7 +85,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      * decide how to react. Don't install a MITM manager in the proxy in case of
      * a failure.
      * 
-     * @param authority
+     * @param certConfig
      *            a parameter object to provide personal informations of the
      *            Certificate Authority and the dynamic certificates.
      * 
@@ -99,12 +99,12 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      *            thread, since there is a connection cache too. It's save to
      *            give a null cache to prevent memory or locking issues.
      */
-    public BouncyCastleSslEngineSource(Authority authority,
+    public BouncyCastleSslEngineSource(CertificateConfig certConfig,
             boolean trustAllServers, boolean sendCerts,
             Cache<String, SSLContext> sslContexts)
             throws GeneralSecurityException, OperatorCreationException,
             RootCertificateException, IOException {
-        this.authority = authority;
+        this.certConfig = certConfig;
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
         this.serverSSLContexts = sslContexts;
@@ -119,7 +119,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      * the manager decide how to react. Don't install a MITM manager in the
      * proxy in case of a failure.
      * 
-     * @param authority
+     * @param certConfig
      *            a parameter object to provide personal informations of the
      *            Certificate Authority and the dynamic certificates.
      * 
@@ -127,11 +127,11 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      * 
      * @param sendCerts
      */
-    public BouncyCastleSslEngineSource(Authority authority,
+    public BouncyCastleSslEngineSource(CertificateConfig certConfig,
             boolean trustAllServers, boolean sendCerts)
             throws RootCertificateException, GeneralSecurityException,
             IOException, OperatorCreationException {
-        this(authority, trustAllServers, sendCerts,
+        this(certConfig, trustAllServers, sendCerts,
                 initDefaultCertificateCache());
     }
 
@@ -211,35 +211,37 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
 
     private void initializeKeyStore() throws RootCertificateException,
             GeneralSecurityException, OperatorCreationException, IOException {
-        if (authority.aliasFile(KEY_STORE_FILE_EXTENSION).exists()
-                && authority.aliasFile(".pem").exists()) {
+        if (certConfig.authority().aliasFile(KEY_STORE_FILE_EXTENSION).exists()
+                && certConfig.authority().aliasFile(".pem").exists()) {
             return;
         }
         MillisecondsDuration duration = new MillisecondsDuration();
-        KeyStore keystore = CertificateHelper.createRootCertificate(authority,
-                KEY_STORE_TYPE);
+        KeyStore keystore = CertificateHelper.createRootCertificate(certConfig.authority(),
+                KEY_STORE_TYPE,
+                certConfig.rootKeySize(),
+                certConfig.notBefore(), certConfig.notAfter());
         LOG.info("Created root certificate authority key store in {}ms",
                 duration);
 
         OutputStream os = null;
         try {
             os = new FileOutputStream(
-                    authority.aliasFile(KEY_STORE_FILE_EXTENSION));
-            keystore.store(os, authority.password());
+                    certConfig.authority().aliasFile(KEY_STORE_FILE_EXTENSION));
+            keystore.store(os, certConfig.authority().password());
         } finally {
             IOUtils.closeQuietly(os);
         }
 
-        Certificate cert = keystore.getCertificate(authority.alias());
-        exportPem(authority.aliasFile(".pem"), cert);
+        Certificate cert = keystore.getCertificate(certConfig.authority().alias());
+        exportPem(certConfig.authority().aliasFile(".pem"), cert);
     }
 
     private void initializeSSLContext() throws GeneralSecurityException,
             IOException {
         KeyStore ks = loadKeyStore();
-        caCert = ks.getCertificate(authority.alias());
-        caPrivKey = (PrivateKey) ks.getKey(authority.alias(),
-                authority.password());
+        caCert = ks.getCertificate(certConfig.authority().alias());
+        caPrivKey = (PrivateKey) ks.getKey(certConfig.authority().alias(),
+                certConfig.authority().password());
 
         TrustManager[] trustManagers;
         if (trustAllServers) {
@@ -251,7 +253,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
 
         KeyManager[] keyManagers;
         if (sendCerts) {
-            keyManagers = CertificateHelper.getKeyManagers(ks, authority);
+            keyManagers = CertificateHelper.getKeyManagers(ks, certConfig.authority());
         } else {
             keyManagers = new KeyManager[0];
         }
@@ -270,8 +272,8 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         FileInputStream is = null;
         try {
             is = new FileInputStream(
-                    authority.aliasFile(KEY_STORE_FILE_EXTENSION));
-            ks.load(is, authority.password());
+                    certConfig.authority().aliasFile(KEY_STORE_FILE_EXTENSION));
+            ks.load(is, certConfig.authority().password());
         } finally {
             IOUtils.closeQuietly(is);
         }
@@ -335,9 +337,11 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         MillisecondsDuration duration = new MillisecondsDuration();
 
         KeyStore ks = CertificateHelper.createServerCertificate(commonName,
-                subjectAlternativeNames, authority, caCert, caPrivKey);
+                subjectAlternativeNames, certConfig.authority(), caCert, caPrivKey,
+                certConfig.serverKeySize(),
+                certConfig.notBefore(), certConfig.notAfter());
         KeyManager[] keyManagers = CertificateHelper.getKeyManagers(ks,
-                authority);
+                certConfig.authority());
 
         SSLContext result = CertificateHelper.newServerContext(keyManagers);
 
@@ -351,14 +355,16 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
             IOException {
 
         KeyStore ks = CertificateHelper.createServerCertificate(commonName,
-                subjectAlternativeNames, authority, caCert, caPrivKey);
+                subjectAlternativeNames, certConfig.authority(), caCert, caPrivKey,
+                certConfig.serverKeySize(),
+                certConfig.notBefore(), certConfig.notAfter());
 
-        PrivateKey key = (PrivateKey) ks.getKey(authority.alias(),
-                authority.password());
-        exportPem(authority.aliasFile("-" + commonName + "-key.pem"), key);
+        PrivateKey key = (PrivateKey) ks.getKey(certConfig.authority().alias(),
+                certConfig.authority().password());
+        exportPem(certConfig.authority().aliasFile("-" + commonName + "-key.pem"), key);
 
-        Object[] certs = ks.getCertificateChain(authority.alias());
-        exportPem(authority.aliasFile("-" + commonName + "-cert.pem"), certs);
+        Object[] certs = ks.getCertificateChain(certConfig.authority().alias());
+        exportPem(certConfig.authority().aliasFile("-" + commonName + "-cert.pem"), certs);
     }
 
     private void exportPem(File exportFile, Object... certs)

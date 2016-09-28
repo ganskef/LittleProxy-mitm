@@ -150,8 +150,19 @@ public final class CertificateHelper {
             String keyStoreType) throws NoSuchAlgorithmException,
             NoSuchProviderException, IOException,
             OperatorCreationException, CertificateException, KeyStoreException {
+        return createRootCertificate(authority, keyStoreType,
+                ROOT_KEYSIZE,
+                NOT_BEFORE, NOT_AFTER);
+    }
 
-        KeyPair keyPair = generateKeyPair(ROOT_KEYSIZE);
+    public static KeyStore createRootCertificate(Authority authority,
+            String keyStoreType,
+            int keySize,
+            Date notBefore, Date notAfter) throws NoSuchAlgorithmException,
+            NoSuchProviderException, IOException,
+            OperatorCreationException, CertificateException, KeyStoreException {
+
+        KeyPair keyPair = generateKeyPair(keySize);
 
         X500NameBuilder nameBuilder = new X500NameBuilder(BCStyle.INSTANCE);
         nameBuilder.addRDN(BCStyle.CN, authority.commonName());
@@ -164,7 +175,7 @@ public final class CertificateHelper {
         PublicKey pubKey = keyPair.getPublic();
 
         X509v3CertificateBuilder generator = new JcaX509v3CertificateBuilder(
-                issuer, serial, NOT_BEFORE, NOT_AFTER, subject, pubKey);
+                issuer, serial, notBefore, notAfter, subject, pubKey);
 
         generator.addExtension(Extension.subjectKeyIdentifier, false,
                 createSubjectKeyIdentifier(pubKey));
@@ -214,7 +225,20 @@ public final class CertificateHelper {
             IOException, OperatorCreationException, CertificateException,
             InvalidKeyException, SignatureException, KeyStoreException {
 
-        KeyPair keyPair = generateKeyPair(FAKE_KEYSIZE);
+        return createServerCertificate(commonName, subjectAlternativeNames, authority, caCert, caPrivKey,
+                FAKE_KEYSIZE,
+                NOT_BEFORE, NOT_AFTER);
+    }
+
+    public static KeyStore createServerCertificate(String commonName,
+            SubjectAlternativeNameHolder subjectAlternativeNames,
+            Authority authority, Certificate caCert, PrivateKey caPrivKey,
+            int keySize,
+            Date notBefore, Date notAfter) throws NoSuchAlgorithmException, NoSuchProviderException,
+            IOException, OperatorCreationException, CertificateException,
+            InvalidKeyException, SignatureException, KeyStoreException {
+
+        KeyPair keyPair = generateKeyPair(keySize);
 
         X500Name issuer = new X509CertificateHolder(caCert.getEncoded())
                 .getSubject();
@@ -226,8 +250,9 @@ public final class CertificateHelper {
         name.addRDN(BCStyle.OU, authority.certOrganizationalUnitName());
         X500Name subject = name.build();
 
-        X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(issuer, serial, NOT_BEFORE,
-                new Date(System.currentTimeMillis() + ONE_DAY), subject, keyPair.getPublic());
+        X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
+                issuer, serial, notBefore, notAfter, subject,
+                keyPair.getPublic());
 
         builder.addExtension(Extension.subjectKeyIdentifier, false,
                 createSubjectKeyIdentifier(keyPair.getPublic()));
