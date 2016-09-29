@@ -83,11 +83,14 @@ public final class CertificateHelper {
 
     private static final int FAKE_KEYSIZE = 1024;
 
+    /** The milliseconds of a day */
+    private static final long ONE_DAY = 86400000L;
+
     /**
      * Current time minus 1 year, just in case software clock goes back due to
      * time synchronization
      */
-    private static final Date NOT_BEFORE = new Date(System.currentTimeMillis() - 86400000L * 365);
+    private static final Date NOT_BEFORE = new Date(System.currentTimeMillis() - ONE_DAY * 365);
 
     /**
      * The maximum possible value in X.509 specification: 9999-12-31 23:59:59,
@@ -96,8 +99,7 @@ public final class CertificateHelper {
      * 
      * Hundred years in the future from starting the proxy should be enough.
      */
-    private static final Date NOT_AFTER = new Date(
-            System.currentTimeMillis() + 86400000L * 365 * 100);
+    private static final Date NOT_AFTER = new Date(System.currentTimeMillis() + ONE_DAY * 365 * 100);
 
     /**
      * Enforce TLS 1.2 if available, since it's not default up to Java 8.
@@ -224,9 +226,8 @@ public final class CertificateHelper {
         name.addRDN(BCStyle.OU, authority.certOrganizationalUnitName());
         X500Name subject = name.build();
 
-        X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
-                issuer, serial, NOT_BEFORE, NOT_AFTER, subject,
-                keyPair.getPublic());
+        X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(issuer, serial, NOT_BEFORE,
+                new Date(System.currentTimeMillis() + ONE_DAY), subject, keyPair.getPublic());
 
         builder.addExtension(Extension.subjectKeyIdentifier, false,
                 createSubjectKeyIdentifier(keyPair.getPublic()));
