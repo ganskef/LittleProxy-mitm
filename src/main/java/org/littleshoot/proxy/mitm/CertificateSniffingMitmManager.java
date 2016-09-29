@@ -30,13 +30,25 @@ public class CertificateSniffingMitmManager implements MitmManager {
 
     public CertificateSniffingMitmManager(Authority authority)
             throws RootCertificateException {
-        this(CertificateConfig.newConfig(authority).build());
+        this(CertificateConfig.defaultConfig(authority));
     }
 
     public CertificateSniffingMitmManager(CertificateConfig certConfig)
             throws RootCertificateException {
         try {
+            /* Need to invoke 3-ary constructor overload to use default caching policy.
+            Invoking 4-ary overload with certCacheConfig set to null will result in no cache at all */
             sslEngineSource = new BouncyCastleSslEngineSource(certConfig, true, true);
+        } catch (final Exception e) {
+            throw new RootCertificateException(
+                    "Errors during assembling root CA.", e);
+        }
+    }
+
+    public CertificateSniffingMitmManager(CertificateConfig certConfig, CacheConfig certCacheConfig)
+            throws RootCertificateException {
+        try {
+            sslEngineSource = new BouncyCastleSslEngineSource(certConfig, true, true, certCacheConfig);
         } catch (final Exception e) {
             throw new RootCertificateException(
                     "Errors during assembling root CA.", e);

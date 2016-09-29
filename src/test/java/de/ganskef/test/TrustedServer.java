@@ -22,7 +22,7 @@ public class TrustedServer extends SecureServer {
 
     public Server start() throws Exception {
         BouncyCastleSslEngineSource es = new BouncyCastleSslEngineSource(
-                CertificateConfig.newConfig(new Authority()).build(), true, true);
+                CertificateConfig.defaultConfig(new Authority()), true, true);
         SubjectAlternativeNameHolder san = new SubjectAlternativeNameHolder();
         // san.addDomainName("localhost");
         es.initializeServerCertificates(commonName, san);

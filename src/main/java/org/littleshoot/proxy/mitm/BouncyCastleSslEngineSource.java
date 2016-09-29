@@ -93,21 +93,21 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      * 
      * @param sendCerts
      * 
-     * @param sslContexts
-     *            a cache to store dynamically created server certificates.
+     * @param certCacheConfig
+     *            a configuration for cache to store dynamically created server certificates.
      *            Generation takes between 50 to 500ms, but only once per
-     *            thread, since there is a connection cache too. It's save to
-     *            give a null cache to prevent memory or locking issues.
+     *            thread, since there is a connection cache too. It's safe to
+     *            give a null cache config to prevent memory or locking issues.
      */
     public BouncyCastleSslEngineSource(CertificateConfig certConfig,
             boolean trustAllServers, boolean sendCerts,
-            Cache<String, SSLContext> sslContexts)
+            CacheConfig certCacheConfig)
             throws GeneralSecurityException, OperatorCreationException,
             RootCertificateException, IOException {
         this.certConfig = certConfig;
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
-        this.serverSSLContexts = sslContexts;
+        this.serverSSLContexts = initCertificatesCache(certCacheConfig);
         initializeKeyStore();
         initializeSSLContext();
     }
@@ -132,13 +132,37 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
             throws RootCertificateException, GeneralSecurityException,
             IOException, OperatorCreationException {
         this(certConfig, trustAllServers, sendCerts,
-                initDefaultCertificateCache());
+                createDefaultCacheConfig());
     }
 
-    private static Cache<String, SSLContext> initDefaultCertificateCache() {
-        return CacheBuilder.newBuilder() //
-                .expireAfterAccess(5, TimeUnit.MINUTES) //
-                .concurrencyLevel(16) //
+    private Cache<String, SSLContext> initCertificatesCache(CacheConfig cacheConfig) {
+        if (cacheConfig == null) {
+            // Shortcut
+            return null;
+        }
+
+        CacheBuilder cb = CacheBuilder.newBuilder().
+                concurrencyLevel(16)
+                .initialCapacity(cacheConfig.initialCapacity());
+        if (cacheConfig.maximumSize() != CacheConfig.UNSET_SIZE) {
+            cb.maximumSize(cacheConfig.maximumSize());
+        }
+        if (cacheConfig.expireAfterCreate() != CacheConfig.UNSET_DURATION) {
+            cb.expireAfterWrite(cacheConfig.expireAfterCreate(), TimeUnit.MILLISECONDS);
+        }
+        if (cacheConfig.expireAfterUse() != CacheConfig.UNSET_DURATION) {
+            cb.expireAfterAccess(cacheConfig.expireAfterUse(), TimeUnit.MILLISECONDS);
+        }
+        return cb.build();
+    }
+
+    private static CacheConfig createDefaultCacheConfig() {
+        return CacheConfig.newConfig()
+                /* By default certificate expires in 1 year.
+                To prevent keeping expired certificates tell cache to evict them after
+                2/3 of a year if them still there somehow */
+                .expireAfterCreate(240, TimeUnit.DAYS)
+                .expireAfterUse(5, TimeUnit.MINUTES)
                 .build();
     }
 

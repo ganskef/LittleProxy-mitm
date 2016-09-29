@@ -17,8 +17,7 @@ public class CertificateConfig {
      * time synchronization.
      *
      * Time gets recomputed each time certificate is generating,
-     * that prevents producing too long living certificates, that my cause issues in some cases
-     * (if not nullified by improper certificate caching strategy)
+     * to prevent producing too long living certificates, that my cause issues (e.g. on some Android 6.0 builds)
      */
     private static final DateProvider DEFAULT_NOT_BEFORE = DateProvider.Common.beforeNow(365, TimeUnit.DAYS);
 
@@ -28,7 +27,7 @@ public class CertificateConfig {
      * expiration date grater than Mon, 24 Jan 6084 02:07:59 GMT (issue #6).
      *
      * Time gets recomputed each time certificate is generating,
-     * that prevents producing expired certificates (if not nullified by improper certificate caching strategy).
+     * to prevent producing expired certificates (if not nullified by improper certificate caching policy).
      */
     private static final DateProvider DEFAULT_NOT_AFTER = DateProvider.Common.afterNow(365, TimeUnit.DAYS);
 
@@ -52,23 +51,27 @@ public class CertificateConfig {
         return new Builder(authority);
     }
 
-    public Authority authority() {
+    public static CertificateConfig defaultConfig(Authority authority) {
+        return new Builder(authority).build();
+    }
+
+    Authority authority() {
         return authority;
     }
 
-    public int rootKeySize() {
+    int rootKeySize() {
         return rootKeySize;
     }
 
-    public int serverKeySize() {
+    int serverKeySize() {
         return serverKeySize;
     }
 
-    public Date notBefore() {
+    Date notBefore() {
         return notBefore.getDate();
     }
 
-    public Date notAfter() {
+    Date notAfter() {
         return notAfter.getDate();
     }
 
@@ -81,7 +84,7 @@ public class CertificateConfig {
         private DateProvider notBefore = DEFAULT_NOT_BEFORE;
         private DateProvider notAfter = DEFAULT_NOT_AFTER;
 
-        public Builder(Authority authority) {
+        private Builder(Authority authority) {
             if (authority == null) {
                 throw new NullPointerException("authority is null");
             }
@@ -113,7 +116,7 @@ public class CertificateConfig {
         }
 
         /**
-         * How many time certificate is valid after generation
+         * How much time certificate is valid after generation
          * @param validAfter time interval length in given units
          * @param unit duration unit
          * @return
@@ -124,7 +127,7 @@ public class CertificateConfig {
         }
 
         /**
-         * How many time certificate was valid before generation
+         * How much time certificate was valid before generation
          * @param validBefore duration in given units
          * @param unit duration unit
          * @return

@@ -96,7 +96,7 @@ public final class CertificateHelper {
      * The maximum possible value in X.509 specification: 9999-12-31 23:59:59,
      * new Date(253402300799000L), but Apple iOS 8 fails with a certificate
      * expiration date grater than Mon, 24 Jan 6084 02:07:59 GMT (issue #6).
-     * 
+     *
      * Hundred years in the future from starting the proxy should be enough.
      */
     private static final Date NOT_AFTER = new Date(System.currentTimeMillis() + ONE_DAY * 365 * 100);

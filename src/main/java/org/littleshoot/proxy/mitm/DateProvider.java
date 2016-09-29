@@ -43,7 +43,7 @@ interface DateProvider {
          */
         public static DateProvider beforeNow(final long offset, final TimeUnit unit) {
             if (offset < 0) {
-                throw new IllegalArgumentException("Negative offset not allowed");
+                throw new IllegalArgumentException("Negative offset");
             }
             return relativeToNow(-offset, unit);
         }
@@ -56,7 +56,7 @@ interface DateProvider {
          */
         public static DateProvider afterNow(final long offset, final TimeUnit unit) {
             if (offset < 0) {
-                throw new IllegalArgumentException("Negative offset not allowed");
+                throw new IllegalArgumentException("Negative offset");
             }
             return relativeToNow(offset, unit);
         }
