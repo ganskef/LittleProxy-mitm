@@ -38,7 +38,7 @@ public class LittleProxyMitmProxy extends de.ganskef.test.Proxy implements
 
     private final MitmManager mitmManager;
 
-    public LittleProxyMitmProxy(int proxyPort) throws RootCertificateException {
+    public LittleProxyMitmProxy(int proxyPort) throws Exception {
         this(proxyPort, new CertificateSniffingMitmManager());
     }
 

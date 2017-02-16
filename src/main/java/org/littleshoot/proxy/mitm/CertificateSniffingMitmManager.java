@@ -24,19 +24,16 @@ public class CertificateSniffingMitmManager implements MitmManager {
 
     private BouncyCastleSslEngineSource sslEngineSource;
 
-    public CertificateSniffingMitmManager() throws RootCertificateException {
+    public CertificateSniffingMitmManager() throws Exception {
         this(new Authority());
     }
 
-    public CertificateSniffingMitmManager(Authority authority)
-            throws RootCertificateException {
-        try {
-            sslEngineSource = new BouncyCastleSslEngineSource(authority, true,
-                    true);
-        } catch (final Exception e) {
-            throw new RootCertificateException(
-                    "Errors during assembling root CA.", e);
-        }
+    public CertificateSniffingMitmManager(Authority authority) throws Exception {
+        this(new BouncyCastleSslEngineSource(authority, true, true));
+    }
+
+    public CertificateSniffingMitmManager(BouncyCastleSslEngineSource sslEngineSource) throws RootCertificateException {
+        this.sslEngineSource = sslEngineSource;
     }
 
     public SSLEngine serverSslEngine(String peerHost, int peerPort) {

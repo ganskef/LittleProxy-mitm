@@ -108,8 +108,17 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
         this.serverSSLContexts = sslContexts;
+
+        init();
+    }
+
+    protected void init()
+        throws RootCertificateException, GeneralSecurityException,
+        OperatorCreationException, IOException {
+
         initializeKeyStore();
-        initializeSSLContext();
+        KeyStore ks = loadCACertificates();
+        sslContext = initializeSSLContext(ks);
     }
 
     /**
@@ -167,14 +176,14 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
     }
 
     public SSLEngine newSslEngine() {
-        SSLEngine sslEngine = sslContext.createSSLEngine();
+        SSLEngine sslEngine = getSSLContext().createSSLEngine();
         filterWeakCipherSuites(sslEngine);
         return sslEngine;
     }
 
     @Override
     public SSLEngine newSslEngine(String remoteHost, int remotePort) {
-        SSLEngine sslEngine = sslContext
+        SSLEngine sslEngine = getSSLContext()
                 .createSSLEngine(remoteHost, remotePort);
         sslEngine.setUseClientMode(true);
         if (!tryHostNameVerificationJava7(sslEngine)) {
@@ -182,6 +191,10 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         }
         filterWeakCipherSuites(sslEngine);
         return sslEngine;
+    }
+
+    protected SSLContext getSSLContext() {
+        return sslContext;
     }
 
     private boolean tryHostNameVerificationJava7(SSLEngine sslEngine) {
@@ -209,7 +222,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         return false;
     }
 
-    private void initializeKeyStore() throws RootCertificateException,
+    protected void initializeKeyStore() throws RootCertificateException,
             GeneralSecurityException, OperatorCreationException, IOException {
         if (authority.aliasFile(KEY_STORE_FILE_EXTENSION).exists()
                 && authority.aliasFile(".pem").exists()) {
@@ -234,13 +247,16 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
         exportPem(authority.aliasFile(".pem"), cert);
     }
 
-    private void initializeSSLContext() throws GeneralSecurityException,
-            IOException {
+    protected KeyStore loadCACertificates() throws GeneralSecurityException, IOException {
         KeyStore ks = loadKeyStore();
         caCert = ks.getCertificate(authority.alias());
         caPrivKey = (PrivateKey) ks.getKey(authority.alias(),
-                authority.password());
+            authority.password());
+        return ks;
+    }
 
+    protected SSLContext initializeSSLContext(KeyStore ks) throws GeneralSecurityException,
+            IOException {
         TrustManager[] trustManagers;
         if (trustAllServers) {
             trustManagers = InsecureTrustManagerFactory.INSTANCE
@@ -256,12 +272,12 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
             keyManagers = new KeyManager[0];
         }
 
-        sslContext = CertificateHelper.newClientContext(keyManagers,
-                trustManagers);
+        SSLContext sslContext = CertificateHelper.newClientContext(keyManagers, trustManagers);
         SSLEngine sslEngine = sslContext.createSSLEngine();
         if (!tryHostNameVerificationJava7(sslEngine)) {
             LOG.warn("Host Name Verification is not supported, causes insecure HTTPS connection to upstream servers.");
         }
+        return sslContext;
     }
 
     private KeyStore loadKeyStore() throws GeneralSecurityException,

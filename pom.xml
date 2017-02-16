@@ -3,7 +3,7 @@
     <groupId>com.github.ganskef</groupId>
     <artifactId>littleproxy-mitm</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.0.0-VGS</version>
     <name>LittleProxy - Man-In-The-Middle</name>
     <description>LittleProxy is a high performance HTTP proxy written in Java and using the Netty networking framework.
 
@@ -79,14 +79,12 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
             -->
 
             <!--If this fails, you could exclude netty-tcnative: -->
-            <!-- - ->
-                <exclusions>
+            <exclusions>
                 <exclusion>
-                <artifactId>netty-tcnative</artifactId>
-                <groupId>io.netty</groupId>
+                    <artifactId>netty-tcnative</artifactId>
+                    <groupId>io.netty</groupId>
                 </exclusion>
-                </exclusions>
-                <!- - -->
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -116,6 +114,58 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
     <prerequisites>
         <maven>3.0.4</maven>
     </prerequisites>
+
+    <repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>http://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>http://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>spring-releases</id>
+            <name>Spring Releases</name>
+            <url>http://repo.spring.io/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>jcenter</id>
+            <name>jcenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+
+        <repository>
+            <id>repo.spring.io</id>
+            <name>repo.spring.io</name>
+            <url>http://repo.spring.io/libs-snapshot-local</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>yle-public</id>
+            <name>Yle public repository</name>
+            <url>http://maven.c4.yle.fi/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
@@ -211,26 +261,26 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
-                <configuration>
-                    <show>private</show>
-                    <source>1.7</source>
-                    <links>
-                        <link>http://netty.io/4.0/api/</link>
-                    </links>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+                <!--<version>2.10.3</version>-->
+                <!--<configuration>-->
+                    <!--<show>private</show>-->
+                    <!--<source>1.7</source>-->
+                    <!--<links>-->
+                        <!--<link>http://netty.io/4.0/api/</link>-->
+                    <!--</links>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>attach-javadocs</id>-->
+                        <!--<goals>-->
+                            <!--<goal>jar</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
 
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -259,9 +309,9 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 
         <extensions>
             <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>1.2.3.Final</version>
+                <groupId>fi.yle.tools</groupId>
+                <artifactId>aws-maven</artifactId>
+                <version>1.4.0</version>
             </extension>
         </extensions>
     </build>
@@ -269,18 +319,18 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
     <reporting>
         <plugins>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.5.2</version>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>findbugs-maven-plugin</artifactId>-->
+                <!--<version>2.5.2</version>-->
+            <!--</plugin>-->
 
-            <!-- Standard maven site report -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.6</version>
-            </plugin>
+            <!--&lt;!&ndash; Standard maven site report &ndash;&gt;-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-project-info-reports-plugin</artifactId>-->
+                <!--<version>2.6</version>-->
+            <!--</plugin>-->
 
             <!-- Style report -->
             <!-- <plugin> error - heap space problem <groupId>org.apache.maven.plugins</groupId>
@@ -292,50 +342,50 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                 </plugin> -->
 
             <!-- Tag Report -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <multipleLineComments>true</multipleLineComments>
-                    <tags>
-                        <tag>mudo</tag>
-                        <tag>todo</tag>
-                        <tag>idea</tag>
-                        <tag>MUDO</tag>
-                        <tag>TODO</tag>
-                        <tag>IDEA</tag>
-                    </tags>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>taglist-maven-plugin</artifactId>-->
+                <!--<version>2.4</version>-->
+                <!--<configuration>-->
+                    <!--<multipleLineComments>true</multipleLineComments>-->
+                    <!--<tags>-->
+                        <!--<tag>mudo</tag>-->
+                        <!--<tag>todo</tag>-->
+                        <!--<tag>idea</tag>-->
+                        <!--<tag>MUDO</tag>-->
+                        <!--<tag>TODO</tag>-->
+                        <!--<tag>IDEA</tag>-->
+                    <!--</tags>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.16</version>
-                <configuration>
-                    <showSuccess>false</showSuccess>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-report-plugin</artifactId>-->
+                <!--<version>2.16</version>-->
+                <!--<configuration>-->
+                    <!--<showSuccess>false</showSuccess>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changes-plugin</artifactId>
-                <version>2.8</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>github-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-changes-plugin</artifactId>-->
+                <!--<version>2.8</version>-->
+                <!--<reportSets>-->
+                    <!--<reportSet>-->
+                        <!--<reports>-->
+                            <!--<report>github-report</report>-->
+                        <!--</reports>-->
+                    <!--</reportSet>-->
+                <!--</reportSets>-->
+            <!--</plugin>-->
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jxr-maven-plugin</artifactId>
-                <version>2.3</version>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>jxr-maven-plugin</artifactId>-->
+                <!--<version>2.3</version>-->
+            <!--</plugin>-->
         </plugins>
     </reporting>
 
@@ -347,14 +397,16 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
     </developers>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>vg-release</id>
+            <name>VG Release Repository</name>
+            <url>s3://very-good/software/release/</url>
         </repository>
+        <snapshotRepository>
+            <id>vg-snapshot</id>
+            <name>VG Snapshot Repository</name>
+            <url>s3://very-good/software/snapshot/</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <profiles>

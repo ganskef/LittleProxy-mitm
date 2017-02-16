@@ -9,3 +9,7 @@
 /*.log
 /littleproxy_cert
 /littleproxy_keystore.jks
+
+### IntelliJ template
+.idea/
+*.iml
