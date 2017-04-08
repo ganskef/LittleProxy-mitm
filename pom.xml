@@ -158,11 +158,11 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 
     <pluginRepositories>
         <pluginRepository>
-            <id>yle-public</id>
-            <name>Yle public repository</name>
-            <url>http://maven.c4.yle.fi/release</url>
+            <id>jfog</id>
+            <name>jfrog</name>
+            <url>https://dl.bintray.com/vg/vgs-misc</url>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
@@ -308,11 +308,13 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
         </plugins>
 
         <extensions>
+
             <extension>
-                <groupId>fi.yle.tools</groupId>
+                <groupId>io.vgs.tools</groupId>
                 <artifactId>aws-maven</artifactId>
-                <version>1.4.0</version>
+                <version>1.4.2</version>
             </extension>
+
         </extensions>
     </build>
 
@@ -398,14 +400,14 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
 
     <distributionManagement>
         <repository>
-            <id>vg-release</id>
-            <name>VG Release Repository</name>
-            <url>s3://very-good/software/release/</url>
+            <id>vault-http-release</id>
+            <name>AWS Release Repository</name>
+            <url>s3://vault-dev-01-audits-01-artifact-19k6160zpr44j/software/release/</url>
         </repository>
         <snapshotRepository>
-            <id>vg-snapshot</id>
-            <name>VG Snapshot Repository</name>
-            <url>s3://very-good/software/snapshot/</url>
+            <id>vault-http-snapshot</id>
+            <name>AWS Snapshot Repository</name>
+            <url>s3://vault-dev-01-audits-01-artifact-19k6160zpr44j/software/snapshot/</url>
         </snapshotRepository>
     </distributionManagement>
 
