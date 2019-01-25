@@ -86,7 +86,7 @@ jobs:
       - <<: *setup-env
       - add_ssh_keys:
           fingerprints:
-          - "c8:47:51:8b:5e:89:95:7d:2a:2d:26:5f:0a:ea:8a:4b"
+          - "40:88:ac:fe:ba:22:75:4d:a7:84:e3:cc:07:d4:0c:e8"
       - run:
           name: Release
           command: |
