@@ -154,13 +154,37 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
             <name>repo.spring.io</name>
             <url>http://repo.spring.io/libs-snapshot-local</url>
         </repository>
+
+        <repository>
+            <id>verygood-release-repo</id>
+            <name>Very Good Release Repository</name>
+            <url>s3://vault-dev-01-audits-01-artifact-19k6160zpr44j/software/release/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>verygood-snapshot-repo</id>
+            <name>Very Good Snapshot Repository</name>
+            <url>s3://vault-dev-01-audits-01-artifact-19k6160zpr44j/software/snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>jfog</id>
             <name>jfrog</name>
-            <url>https://dl.bintray.com/vg/vgs-misc</url>
+            <url>https://dl.bintray.com/vg/vgs-oss</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -312,7 +336,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
             <extension>
                 <groupId>io.vgs.tools</groupId>
                 <artifactId>aws-maven</artifactId>
-                <version>1.4.2</version>
+                <version>1.4.3</version>
             </extension>
 
         </extensions>

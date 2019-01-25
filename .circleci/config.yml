@@ -1,0 +1,138 @@
+job-defaults: &job-defaults
+  working_directory: &working_directory
+    ~/LittleProxy-mitm
+  test_results_directory: &test_results_directory
+    /tmp/test-results
+  environment:
+    - RELEASE_BRANCH: vgs-edition
+    - AWS_DEFAULT_REGION: us-west-2
+    - AWS_REGION: us-west-2
+    - AWS_PROFILE: vgs-dev
+
+# Set up AWS environment
+setup-env: &setup-env
+  run:
+    name: Setup Environment
+    command: ./scripts/env.sh
+
+# Template to save Maven dependency cache to restore it in another jobs
+save-maven-cache: &save-maven-cache
+  save_cache:
+    key: LittleProxy-mitm-{{ checksum "pom.xml" }}
+    paths:
+      - ~/.m2
+
+restore-maven-cache: &restore-maven-cache
+  restore_cache:
+    key: LittleProxy-mitm-{{ checksum "pom.xml" }}
+
+# Persists workspace so it can be attached in another jobs as soon as it was checked out and built
+persist-workspace: &persist-workspace
+  persist_to_workspace:
+    root: .
+    paths: "*"
+
+attach-workspace: &attach-workspace
+  attach_workspace:
+    at: *working_directory
+
+# === JOBS ===
+version: 2
+jobs:
+  build:
+    <<: *job-defaults
+    machine:
+      enabled: true
+    steps:
+      - checkout
+      - <<: *setup-env
+      - <<: *restore-maven-cache
+      - run:
+          name: Maven Clean Package
+          command: |
+            unset AWS_ACCESS_KEY_ID; unset AWS_SECRET_ACCESS_KEY; mvn clean dependency:go-offline install -Dmaven.test.skip=true --threads 5 -B
+      - <<: *save-maven-cache
+      - <<: *persist-workspace
+  test:
+    <<: *job-defaults
+    machine:
+      enabled: true
+    steps:
+      - <<: *attach-workspace
+      - <<: *restore-maven-cache
+      - run:
+          name: Run test
+          command: |
+            unset AWS_ACCESS_KEY_ID; unset AWS_SECRET_ACCESS_KEY; ./scripts/run_circle_tests.sh
+  deployment:
+    <<: *job-defaults
+    machine:
+      enabled: true
+    steps:
+      - <<: *attach-workspace
+      - <<: *restore-maven-cache
+      - <<: *setup-env
+      - run:
+          name: Deploy
+          command: |
+            unset AWS_ACCESS_KEY_ID; unset AWS_SECRET_ACCESS_KEY; mvn deploy -DskipTests=true
+  release:
+    <<: *job-defaults
+    machine:
+      enabled: true
+    steps:
+      - <<: *attach-workspace
+      - <<: *restore-maven-cache
+      - <<: *setup-env
+      - add_ssh_keys:
+          fingerprints:
+          - "c8:47:51:8b:5e:89:95:7d:2a:2d:26:5f:0a:ea:8a:4b"
+      - run:
+          name: Release
+          command: |
+            unset AWS_ACCESS_KEY_ID
+            unset AWS_SECRET_ACCESS_KEY
+            git config user.name "circleci"
+            git config user.email "circleci@vgs.com"
+            git fetch
+            git checkout $RELEASE_BRANCH
+            git pull origin $RELEASE_BRANCH
+            git reset --hard
+            git tag -d $CIRCLE_TAG
+            mvn -B -X -e gitflow:release-start -DreleaseVersion=$CIRCLE_TAG
+            mvn -B -X -e gitflow:release-finish -DreleaseVersion=$CIRCLE_TAG -DpostReleaseGoals='deploy -DskipTests'
+            git push origin $RELEASE_BRANCH
+
+# === WORKFLOW ===
+workflows:
+  version: 2
+  build_test_and_deploy:
+    jobs:
+      - build:
+          context: artifact-publisher
+          filters:
+            tags:
+              only: /.*/
+      - test:
+          context: artifact-publisher
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+      - deployment:
+          context: artifact-publisher
+          requires:
+            - test
+          filters:
+            branches:
+              only: vgs-edition
+      - release:
+          context: artifact-publisher
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
