@@ -147,7 +147,7 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
     private static Cache<String, SSLContext> initDefaultCertificateCache() {
         return CacheBuilder.newBuilder() //
                 .expireAfterAccess(5, TimeUnit.MINUTES) //
-                .expireAfterWrite(12, TimeUnit.HOURS)
+                .expireAfterWrite(1, TimeUnit.HOURS) //
                 .concurrencyLevel(16) //
                 .build();
     }
