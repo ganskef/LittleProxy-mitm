@@ -285,6 +285,12 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.8.0</version>
+            </plugin>
+
             <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
                 <!--<artifactId>maven-javadoc-plugin</artifactId>-->
