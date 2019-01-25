@@ -3,7 +3,7 @@
     <groupId>com.github.ganskef</groupId>
     <artifactId>littleproxy-mitm</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1-VGS</version>
+    <version>1.0.2-VGS-SNAPSHOT</version>
     <name>LittleProxy - Man-In-The-Middle</name>
     <description>LittleProxy is a high performance HTTP proxy written in Java and using the Netty networking framework.
 
@@ -289,6 +289,24 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                 <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
                 <version>1.8.0</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <versionDigitToIncrement>2</versionDigitToIncrement>
+                    <releaseRebase>true</releaseRebase>
+                    <pushRemote>false</pushRemote>
+                    <skipTestProject>true</skipTestProject>
+                    <allowSnapshots>true</allowSnapshots>
+                    <gitFlowConfig>
+                        <productionBranch>vgs-edition</productionBranch>
+                        <developmentBranch>vgs-edition</developmentBranch>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                        <versionTagPrefix></versionTagPrefix>
+                    </gitFlowConfig>
+                    <commitMessages>
+                        <releaseStartMessage>update versions for @{version} release</releaseStartMessage>
+                        <releaseFinishMessage>update for next development version @{version}</releaseFinishMessage>
+                    </commitMessages>
+                </configuration>
             </plugin>
 
             <!--<plugin>-->
