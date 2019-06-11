@@ -51,6 +51,11 @@ jobs:
           name: Maven Clean Package
           command: |
             unset AWS_ACCESS_KEY_ID; unset AWS_SECRET_ACCESS_KEY; mvn clean dependency:go-offline install -Dmaven.test.skip=true --threads 5 -B
+      - run:
+          name: Collect Licenses
+          command: unset AWS_ACCESS_KEY_ID; unset AWS_SECRET_ACCESS_KEY; mvn license:aggregate-third-party-report
+      - store_artifacts:
+          path: target/site/aggregate-third-party-report.html
       - <<: *save-maven-cache
       - <<: *persist-workspace
   test:

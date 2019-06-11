@@ -23,6 +23,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.0.0.1</hamcrest.version>
         <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+        <license-maven-plugin.version>1.20</license-maven-plugin.version>
     </properties>
 
     <licenses>
@@ -307,6 +308,20 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                         <releaseFinishMessage>update for next development version @{version}</releaseFinishMessage>
                     </commitMessages>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>download-licenses</id>
+                        <goals>
+                            <goal>download-licenses</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!--<plugin>-->
