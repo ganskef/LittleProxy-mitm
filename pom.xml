@@ -60,7 +60,12 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
                 </exclusion>
             </exclusions>
         </dependency>
-
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-junit</artifactId>
