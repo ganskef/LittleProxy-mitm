@@ -46,6 +46,7 @@ public class HostNameMitmManager implements MitmManager {
         try {
             String serverName = serverHostAndPort.split(":")[0];
             SubjectAlternativeNameHolder san = new SubjectAlternativeNameHolder();
+            san.addDomainName(serverName);
             return sslEngineSource.createCertForHost(serverName, san);
         } catch (Exception e) {
             throw new FakeCertificateException(
