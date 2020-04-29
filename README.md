@@ -1,6 +1,10 @@
 [![Build Status](https://travis-ci.org/ganskef/LittleProxy-mitm.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-mitm)
 [![Published Version](https://img.shields.io/maven-central/v/com.github.ganskef/littleproxy-mitm.svg)](http://search.maven.org/#search|ga|1|g%3A%22com.github.ganskef%22%20AND%20a%3A%22littleproxy-mitm%22)<br />
 
+21.09.2019 - Frank Ganske, about this abandoned repository and new versions
+
+Unfortunately I've lost my PGP private key for uploading Maven artifacts to the Central Repository. So version 1.1.0 will be the last I think.
+
 LittleProxy - Man-In-The-Middle
 ===============================
 
@@ -71,15 +75,14 @@ You impersonate certificates which is normally a bad thing. You have to describe
 the reason for.
 
 Please refer to the documentation of 
-[LittleProxy](https://github.com/adamfisk/LittleProxy) and the Javadoc of 
-`org.littleshoot.proxy.HttpFilters` to filter HTTP/S contents.
+[LittleProxy](https://github.com/adamfisk/LittleProxy) and [Netty](https://netty.io/) especially the Javadoc of `org.littleshoot.proxy.HttpFiltersSource`, `org.littleshoot.proxy.HttpFilters` and [io.netty.channel.ChannelPipeline](https://netty.io/4.1/api/index.html) to filter HTTP/S contents. FAQ: [#25](https://github.com/ganskef/LittleProxy-mitm/issues/25#issuecomment-533908538), [#32](https://github.com/ganskef/LittleProxy-mitm/issues/32#issuecomment-533904216)
 
 ### Resolving URI in case of HTTPS
 
 Mostly you will need an URL to handle content in your filters. With HTTP it's 
 provided by `originalRequest.getUri()`, but with HTTPS you have to get the host 
 name from the initiating `CONNECT` request. Therefore you have to do something 
-like this in your `FiltersSource` implementation: 
+like this in your `HttpFiltersSource` implementation: 
 
 ```java
     private static final AttributeKey<String> CONNECTED_URL = AttributeKey.valueOf("connected_url");
@@ -125,4 +128,6 @@ Caused by: java.security.InvalidAlgorithmParameterException: Prime size must be 
  * I'm not a natural English speaker/writer. So feel free to fix me if I'm wrong 
  (or always in generally) and don't feel sad about a phrase.
 
-----
+### FAQ - Answered Questions
+
+[Issues labeled with question](https://github.com/ganskef/LittleProxy-mitm/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3Aquestion+) which could be interesting for you too.
