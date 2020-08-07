@@ -81,7 +81,7 @@ public final class CertificateHelper {
 
     private static final int ROOT_KEYSIZE = 2048;
 
-    private static final int FAKE_KEYSIZE = 1024;
+    private static final int FAKE_KEYSIZE = 2048;
 
     /** The milliseconds of a day */
     private static final long ONE_DAY = 86400000L;
