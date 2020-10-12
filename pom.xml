@@ -20,7 +20,7 @@ This is an extension module to enable Man-In-The-Middle impersonation for HTTPS.
         <slf4j.version>1.7.21</slf4j.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <littleproxy.version>1.1.0</littleproxy.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <hamcrest.version>1.0.0.1</hamcrest.version>
         <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
     </properties>
