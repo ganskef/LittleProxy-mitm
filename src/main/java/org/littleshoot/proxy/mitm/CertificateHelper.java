@@ -101,24 +101,7 @@ public final class CertificateHelper {
      */
     private static final Date NOT_AFTER = new Date(System.currentTimeMillis() + ONE_DAY * 365 * 100);
 
-    /**
-     * Enforce TLS 1.2 if available, since it's not default up to Java 8.
-     * <p>
-     * Java 7 disables TLS 1.1 and 1.2 for clients. From <a href=
-     * "http://docs.oracle.com/javase/7/docs/technotes/guides/security/SunProviders.html"
-     * >Java Cryptography Architecture Oracle Providers Documentation:</a>
-     * Although SunJSSE in the Java SE 7 release supports TLS 1.1 and TLS 1.2,
-     * neither version is enabled by default for client connections. Some
-     * servers do not implement forward compatibility correctly and refuse to
-     * talk to TLS 1.1 or TLS 1.2 clients. For interoperability, SunJSSE does
-     * not enable TLS 1.1 or TLS 1.2 by default for client connections.
-     */
-    private static final String SSL_CONTEXT_PROTOCOL = "TLSv1.2";
-    /**
-     * {@link SSLContext}: Every implementation of the Java platform is required
-     * to support the following standard SSLContext protocol: TLSv1
-     */
-    private static final String SSL_CONTEXT_FALLBACK_PROTOCOL = "TLSv1";
+    private static final String SSL_CONTEXT_PROTOCOL = "TLS";
 
     private CertificateHelper() {}
 
@@ -301,16 +284,8 @@ public final class CertificateHelper {
     }
 
     private static SSLContext newSSLContext() throws NoSuchAlgorithmException {
-        try {
-            log.debug("Using protocol {}", SSL_CONTEXT_PROTOCOL);
-            return SSLContext.getInstance(SSL_CONTEXT_PROTOCOL
-            /* , PROVIDER_NAME */);
-        } catch (NoSuchAlgorithmException e) {
-            log.warn("Protocol {} not available, falling back to {}", SSL_CONTEXT_PROTOCOL,
-                    SSL_CONTEXT_FALLBACK_PROTOCOL);
-            return SSLContext.getInstance(SSL_CONTEXT_FALLBACK_PROTOCOL
-            /* , PROVIDER_NAME */);
-        }
+        log.debug("Using protocol {}", SSL_CONTEXT_PROTOCOL);
+        return SSLContext.getInstance(SSL_CONTEXT_PROTOCOL);
     }
 
     public static long initRandomSerial() {
