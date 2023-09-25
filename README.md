@@ -1,6 +1,10 @@
 [![Build Status](https://travis-ci.org/ganskef/LittleProxy-mitm.png?branch=master)](https://travis-ci.org/ganskef/LittleProxy-mitm)
 [![Published Version](https://img.shields.io/maven-central/v/com.github.ganskef/littleproxy-mitm.svg)](http://search.maven.org/#search|ga|1|g%3A%22com.github.ganskef%22%20AND%20a%3A%22littleproxy-mitm%22)<br />
 
+25.09.2023 - Frank Ganske, a simple alternative solution
+
+If you're looking for a simple solution to intercept http connections consider to use this [implementation](https://github.com/ganskef/MoCuishle/blob/replace-netty-with-okhttp/okproxy-java/src/main/java/de/ganskef/okproxy/Impersonation.java). A single class based on `okhttps-tls` is providing all the functionality of LittleProxy-mitm. And there is an interception proxy too.
+
 21.09.2019 - Frank Ganske, about this abandoned repository and new versions
 
 Unfortunately I've lost my PGP private key for uploading Maven artifacts to the Central Repository. So version 1.1.0 will be the last I think.
