@@ -3,7 +3,7 @@
 
 25.09.2023 - Frank Ganske, a simple alternative solution
 
-If you're looking for a simple solution to intercept http connections consider to use this [implementation](https://github.com/ganskef/MoCuishle/blob/replace-netty-with-okhttp/okproxy-java/src/main/java/de/ganskef/okproxy/Impersonation.java). A single class based on `okhttps-tls` is providing all the functionality of LittleProxy-mitm. And there is an interception proxy too.
+If you're looking for a simple solution to intercept http connections consider to use this [implementation](https://github.com/ganskef/MoCuishle/blob/master/mocuishle-okproxy/src/main/java/de/ganskef/okproxy/Impersonation.java). A single class based on `okhttps-tls` is providing all the functionality of LittleProxy-mitm. And there is an interception proxy too.
 
 21.09.2019 - Frank Ganske, about this abandoned repository and new versions
 
