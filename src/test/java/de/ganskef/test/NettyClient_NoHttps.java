@@ -132,21 +132,20 @@ class NettyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
             throws Exception {
         if (msg instanceof HttpContent) {
             HttpContent content = (HttpContent) msg;
-            RandomAccessFile output = null;
-            FileChannel oc = null;
-            try {
-                output = new RandomAccessFile(file, "rw");
-                oc = output.getChannel();
+            try (
+                    RandomAccessFile output = new RandomAccessFile(file, "rw");
+                    FileChannel oc = output.getChannel()
+            )
+            {
                 oc.position(oc.size());
                 ByteBuf buffer = content.content();
-                for (int i = 0, len = buffer.nioBufferCount(); i < len; i++) {
+                for (int i = 0, len = buffer.nioBufferCount(); i < len; i++)
+                {
                     oc.write(buffer.nioBuffers()[i]);
                 }
-            } finally {
-                IOUtils.closeQuietly(oc);
-                IOUtils.closeQuietly(output);
             }
-            if (content instanceof LastHttpContent) {
+            if (content instanceof LastHttpContent)
+            {
                 ctx.close();
             }
         }
